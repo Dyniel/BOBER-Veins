@@ -1,0 +1,18 @@
+# Optical rPPG Subsystem Configuration
+optical:
+  sampling_rate_hz: 30.0             # Video frame rate
+  window_length_sec: 10.0            # Processing window length
+  window_stride_sec: 2.0             # Sliding window step
+  bandpass_cutoff_hz: [0.7, 3.5]     # [42 BPM, 210 BPM] human physiological heart rate range
+  filter_order: 3
+  methods:
+    - "green"                        # Green channel averaging baseline
+    - "chrom"                        # Chrominance method (de Haan & Jeanne 2013)
+    - "pos"                          # Plane-Orthogonal-to-Skin (Wang et al. 2017)
+  snr_threshold_db: -3.0             # Quality exclusion threshold
+  synthetic_evaluation:
+    duration_sec: 60.0
+    nominal_hr_bpm: 65.0
+    motion_noise_amplitude: 0.15
+    ambient_drift_hz: 0.1
+

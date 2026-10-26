@@ -1,0 +1,23 @@
+# Data loading and preprocessing configuration
+dataset:
+  name: "esa_headward_fluid_shift"
+  doi: "10.57780/esa-0ggni9p"
+  investigation_acronym: "HeadwardFluidShift_PARA"
+  campaign: "82nd ESA/NASA Parabolic Flight Campaign"
+  reference_study: "Lee et al., Frontiers in Physiology 2020 (DOI: 10.3389/fphys.2020.00863)"
+  n_subjects: 9
+  gravity_levels: [1.0, 0.75, 0.50, 0.25, 0.0]
+  postures: ["seated", "supine"]
+  paths:
+    raw_esa_dir: "data/raw/esa"
+    processed_dir: "data/processed"
+    synthetic_dir: "data/synthetic"
+    rppg_dir: "data/raw/rppg"
+
+synthetic:
+  enabled: true
+  n_subjects: 30
+  noise_sigma: 0.05
+  gravity_grid: [0.0, 0.16, 0.25, 0.38, 0.50, 0.75, 1.0]
+  seed: 42
+

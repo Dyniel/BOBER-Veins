@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software in academic or competition research, please cite it as below."
+authors:
+  - family-names: "Cieślak"
+    given-names: "Daniel"
+title: "BOBER Veins / VascuShift-GPINN: Physics-Informed Venous Hemodynamics and Optical rPPG under Altered Gravity"
+version: 0.1.0
+doi: 10.57780/esa-0ggni9p
+date-released: 2026-10-26
+url: "https://github.com/Dyniel/BOBER-Veins"
+preferred-citation:
+  type: conference-paper
+  authors:
+    - family-names: "BOBER Veins Team"
+  title: "Physics-Informed Modeling of Venous Fluid Redistribution in Altered Gravity"
+  conference: "International Space Science and Scientific Payload Competition (ISSSP 2026)"
+  year: 2026
+

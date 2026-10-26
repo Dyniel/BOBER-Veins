@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vascushift"
+version = "0.1.0"
+description = "BOBER Veins / VascuShift-GPINN: Physics-Informed Venous Hemodynamics and Optical rPPG under Altered Gravity for ISSSP 2026"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Daniel Cieślak", email = "cieslak.a.daniel@gmail.com" }
+]
+license = { text = "MIT" }
+keywords = ["space-medicine", "microgravity", "venous-hemodynamics", "PINN", "rPPG", "ISSSP-2026"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "numpy>=1.22.0",
+    "scipy>=1.8.0",
+    "pandas>=1.4.0",
+    "matplotlib>=3.5.0",
+    "torch>=1.12.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "ruff>=0.1.0",
+]
+cv = [
+    "opencv-python>=4.5.0",
+]
+demo = [
+    "streamlit>=1.20.0",
+]
+
+[project.scripts]
+vascushift = "vascushift.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+

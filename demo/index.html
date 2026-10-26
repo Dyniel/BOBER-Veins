@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOBER Veins / VascuShift-GPINN Demonstrator | ISSSP 2026</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="badge">ISSSP 2026</span>
+        <h1>BOBER Veins / VascuShift-GPINN</h1>
+      </div>
+      <div class="nav-links">
+        <span class="status-pill online">● Pipeline Operational</span>
+        <span class="meta-tag">ESA PFC82 &middot; 9 Subjects &middot; Microgravity Feasibility</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-grid">
+    <!-- Sidebar Controls -->
+    <aside class="controls-panel card">
+      <h2>Simulation & Model Controls</h2>
+      <p class="subtitle">Interactively explore hemodynamics across gravitational fields.</p>
+
+      <div class="control-group">
+        <label for="gravity-slider">
+          <strong>Gravitational Load ($G_z$):</strong>
+          <span id="gravity-val" class="param-val">0.00 G (Microgravity)</span>
+        </label>
+        <input type="range" id="gravity-slider" min="0" max="1" step="0.01" value="0.0">
+        <div class="presets">
+          <button class="preset-btn" onclick="setGravity(0.0, '0.00 G (Microgravity / Supine)')">0G (Space)</button>
+          <button class="preset-btn" onclick="setGravity(0.16, '0.16 G (Lunar)')">Moon</button>
+          <button class="preset-btn" onclick="setGravity(0.38, '0.38 G (Martian)')">Mars</button>
+          <button class="preset-btn" onclick="setGravity(0.50, '0.50 G (Parabolic)')">0.5G</button>
+          <button class="preset-btn" onclick="setGravity(1.00, '1.00 G (Earth Seated)')">1G (Earth)</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="posture-select"><strong>Body Posture:</strong></label>
+        <select id="posture-select">
+          <option value="seated">Seated Upright (θ = 0°)</option>
+          <option value="supine">Supine Horizontal (θ = 90°)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="model-select"><strong>Active Model Architecture:</strong></label>
+        <select id="model-select">
+          <option value="pinn" selected>VascuShift-PINN (Physics-Informed)</option>
+          <option value="mechanistic">Baseline 2: Pure Mechanistic Compartment</option>
+          <option value="linear">Baseline 1a: Linear Regression Baseline</option>
+          <option value="mean">Baseline 0: Constant Mean Baseline</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="subject-select"><strong>Participant Context (ESA PFC82):</strong></label>
+        <select id="subject-select">
+          <option value="all">Cohort Average (N = 9)</option>
+          <option value="sub-01">Participant sub-01 (F)</option>
+          <option value="sub-02">Participant sub-02 (F)</option>
+          <option value="sub-03">Participant sub-03 (F)</option>
+          <option value="sub-06">Participant sub-06 (M)</option>
+          <option value="sub-07">Participant sub-07 (M)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="noise-slider">
+          <strong>Synthetic Observation Noise (σ):</strong>
+          <span id="noise-val" class="param-val">5.0 %</span>
+        </label>
+        <input type="range" id="noise-slider" min="0" max="0.20" step="0.01" value="0.05">
+      </div>
+
+      <div class="info-box">
+        <strong>Scientific Provenance Notice:</strong>
+        <p>Physiological parameters calibrated on verified ESA/NASA 82nd Parabolic Flight Campaign data. Optical rPPG signals independently validated on video benchmarks. The multimodal optical-to-venous connection is an explicitly synthetic observation model ($y = h(x) + \epsilon$).</p>
+      </div>
+    </aside>
+
+    <!-- Main Output Panels -->
+    <section class="outputs-panel">
+      <!-- KPI Metric Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-label">Predicted IJV Lumen Area</span>
+          <div class="kpi-value" id="kpi-area">108.0 <span class="unit">mm²</span></div>
+          <span class="kpi-status" id="kpi-area-status">Venous Congestion</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Local Venous Pressure</span>
+          <div class="kpi-value" id="kpi-pressure">21.0 <span class="unit">mmHg</span></div>
+          <span class="kpi-status" id="kpi-pressure-status">Engorged Transmural</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Hydrostatic Pressure Drop</span>
+          <div class="kpi-value" id="kpi-hydro">0.0 <span class="unit">mmHg</span></div>
+          <span class="kpi-sub">ΔP = ρ·g·Δh·cos(θ)</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Optical Heart Rate (POS)</span>
+          <div class="kpi-value" id="kpi-hr">57.0 <span class="unit">BPM</span></div>
+          <span class="kpi-sub">Signal Quality SNR: +8.4 dB</span>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <div class="chart-card card">
+          <div class="chart-header">
+            <h3>Venous Gravitational Response & ESA Comparison</h3>
+            <span class="provenance-badge real">Measured ESA & Model Overlay</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="hemoChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card card">
+          <div class="chart-header">
+            <h3>Optical rPPG Pulse Waveform (Independently Validated)</h3>
+            <span class="provenance-badge optical">Non-Contact Facial RGB</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="rppgChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card card full-width">
+          <div class="chart-header">
+            <h3>Synthetic Optical-Physiological Proxy Bridge (Module D Feasibility)</h3>
+            <span class="provenance-badge synth">Synthetic Observation Proxy</span>
+          </div>
+          <div class="chart-container-compact">
+            <canvas id="bridgeChart"></canvas>
+          </div>
+          <p class="chart-footnote">*Hypothetical optical proxy feature modeling facial perfusion modulation under venous filling changes. Evaluated for mathematical identifiability under configurable noise levels.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>BOBER Veins / VascuShift-GPINN &middot; International Space Science and Scientific Payload Competition (ISSSP) 2026 &middot; Hong Kong Finals</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,38 @@
+# Unified Experiments Pipeline Configuration
+experiments:
+  physiology:
+    dataset: "esa_headward_fluid_shift"
+    cv_scheme: "leave_one_subject_out" # 9-fold LOSO CV
+    models:
+      - "baseline_mean"
+      - "baseline_linear"
+      - "baseline_ridge"
+      - "mechanistic_physics"
+      - "vascushift_pinn"
+    metrics: ["mae", "rmse", "r2", "constraint_violations"]
+
+  ablations:
+    physics_weight_lambda: [0.0, 0.1, 0.5, 1.0, 2.0, 5.0]
+    unconstrained_pinn:
+      lambda_data: 1.0
+      lambda_physics: 0.0
+      lambda_constraints: 0.0
+    constrained_pinn:
+      lambda_data: 1.0
+      lambda_physics: 1.0
+      lambda_constraints: 2.0
+
+  identifiability:
+    n_synthetic_trials: 50
+    noise_levels: [0.00, 0.02, 0.05, 0.10, 0.15, 0.20]
+    parameters_to_recover: ["A0", "k", "P0", "CVP"]
+
+  rppg:
+    eval_benchmark: true
+    compare_algorithms: ["green", "chrom", "pos"]
+
+  outputs:
+    results_json: "reports/results/master_results.json"
+    results_markdown: "reports/results/master_results.md"
+    figures_dir: "reports/figures"
+
