@@ -1,9 +1,14 @@
 # Data loading and preprocessing configuration
+# NOTE (data audit 2026-11-04, docs/data_audit.md): the ESA HREDA investigation below has
+# NO downloadable data (data_available=False). Without raw files in data/raw/esa the ESA
+# loader returns a SYNTHETIC stand-in. Real fluid-shift values = published group means in
+# data/external/literature_aggregates.csv.
 dataset:
   name: "esa_headward_fluid_shift"
   doi: "10.57780/esa-0ggni9p"
   investigation_acronym: "HeadwardFluidShift_PARA"
-  campaign: "82nd ESA/NASA Parabolic Flight Campaign"
+  campaign: "82nd ESA/NASA Parabolic Flight Campaign (June 2023) - results under evaluation, no files"
+  # Lee 2020 is an EARLIER campaign (ISLSWG, June 2018, no 0-G parabolas), not PFC82
   reference_study: "Lee et al., Frontiers in Physiology 2020 (DOI: 10.3389/fphys.2020.00863)"
   n_subjects: 9
   gravity_levels: [1.0, 0.75, 0.50, 0.25, 0.0]
