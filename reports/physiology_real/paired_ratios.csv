@@ -1,0 +1,13 @@
+variable,dataset,a,b,n_subjects,median_ratio,ci_low,ci_high,fraction_a_gt_b
+ijv_area,bhp_carotid_jugular,supine_tilt_-45,supine_tilt_+45,10,9.376840850209156,6.110217113505971,13.862526089128895,1.0
+ijv_area,bhp_carotid_jugular,supine_tilt_+0,seated_baseline,4,2.548922134504385,1.249063670411987,4.703860640301322,1.0
+ijv_area,bhp_carotid_jugular,prone_tilt_-45,prone_tilt_+45,10,12.427428926071464,8.790740303836841,26.24330016103298,1.0
+ijv_area,bhp_carotid_jugular,supine_tilt_+0,prone_tilt_+0,10,0.9511276227559837,0.47561486033790146,1.7999159184211106,0.4
+ijv_pressure,bhp_carotid_jugular,supine_tilt_-45,supine_tilt_+45,10,6.3443796398269345,4.18072289126823,9.243243242701773,1.0
+ijv_pressure,bhp_carotid_jugular,supine_tilt_+0,seated_baseline,10,2.734693877221722,1.943996203129489,3.705569205997837,1.0
+ijv_pressure,bhp_carotid_jugular,prone_tilt_-45,prone_tilt_+45,9,7.153846151852892,2.254385964643502,12.354838705487683,1.0
+ijv_pressure,bhp_carotid_jugular,supine_tilt_+0,prone_tilt_+0,10,0.6905534628528207,0.6368715083149769,0.9493981037858255,0.2
+heart_rate,physionet_prcp,hut75,supine,10,1.1911406311553443,1.122058406577828,1.3879976232917408,1.0
+heart_rate,physionet_prcp,standing,supine,10,1.1932062702716086,1.082222852282393,1.3014455091765469,1.0
+mean_arterial_pressure,physionet_prcp,hut75,supine,10,1.0513972460534422,0.9998873627567801,1.1238347015444552,0.7
+mean_arterial_pressure,physionet_prcp,standing,supine,10,1.1086063256125378,0.9979508196721314,1.1544455266453317,0.7

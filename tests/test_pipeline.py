@@ -104,6 +104,85 @@ def test_public_physiology_table_has_only_licensed_sources():
     assert "synthetic" not in set(df["provenance"])
 
 
+# --------------------------------------------------------------------------- physiology analysis (unit)
+def _toy_tilt(n_subj=6, seed=0):
+    """Toy long table: ln(area) falls linearly with gz_body, pressure linear; values are synthetic test fixtures."""
+    rng = np.random.default_rng(seed)
+    rows = []
+    for s in range(n_subj):
+        for fam in ("supine", "prone"):
+            for tilt in (-45, -30, -15, 0, 15, 30, 45):
+                gzb = float(np.sin(np.radians(tilt)))
+                post = fam if tilt == 0 else f"{fam}_{'hut' if tilt > 0 else 'hdt'}"
+                base = {"dataset": "toy", "subject_id": f"t{s}", "sex": None, "condition": f"{fam}_tilt_{tilt:+d}",
+                        "posture": post, "tilt_deg": float(tilt), "gz_body": gzb, "lbnp_mmHg": 0.0,
+                        "provenance": "raw_individual"}
+                area = 60 * np.exp(-2.0 * gzb) * np.exp(rng.normal(0, 0.05))
+                rows.append({**base, "variable": "ijv_area_left", "value": area * 0.9})
+                rows.append({**base, "variable": "ijv_area_right", "value": area * 1.1})
+                rows.append({**base, "variable": "ijv_pressure_left", "value": 25 - 20 * gzb + rng.normal(0, 1)})
+    return pd.DataFrame(rows)
+
+
+def test_subject_level_averages_sides_and_flags_implausible():
+    from vascushift.analysis.gravity_physiology import subject_level
+
+    df = _toy_tilt()
+    df.loc[df.index[2], "value"] = 150.0  # an IJVP far above 60 mmHg
+    sub = subject_level(df, "ijv_area", ["toy"])
+    assert (sub["n_sides"] == 2).all()
+    one = sub[(sub.subject_id == "t0") & (sub.condition == "supine_tilt_+0")]["value"].iloc[0]
+    raw = df[(df.subject_id == "t0") & (df.condition == "supine_tilt_+0") & df.variable.str.startswith("ijv_area")]["value"].mean()
+    assert one == pytest.approx(raw)
+    press = subject_level(df, "ijv_pressure", ["toy"])
+    assert (~press["plausible"]).sum() == 1
+
+
+def test_tilt_slopes_recover_known_log_slope():
+    from vascushift.analysis.gravity_physiology import subject_level, summarize_slopes, tilt_slopes
+
+    sub = subject_level(_toy_tilt(), "ijv_area", ["toy"])
+    s = tilt_slopes(sub, log=True)
+    summ = summarize_slopes(s, log=True)
+    for _, r in summ.iterrows():
+        assert r.median_slope == pytest.approx(-2.0, abs=0.1)
+        assert r.ci_low <= r.median_slope <= r.ci_high and r.fraction_negative == 1.0
+        assert r.pct_change_per_0p5g == pytest.approx((np.exp(-1.0) - 1) * 100, abs=4)
+
+
+def test_lbnp_slopes_keep_supine_and_hdt_series_apart():
+    from vascushift.analysis.gravity_physiology import lbnp_slopes
+
+    rows = []
+    for s in range(5):
+        for ser, base, fam_posture in (("supine", 50.0, "supine"), ("hdt15", 100.0, "supine_hdt")):
+            for lb in (0, -10, -20, -30, -40, -50):
+                rows.append({"subject_id": f"s{s}", "condition": f"{ser}_lbnp_{lb:+d}", "family": "supine",
+                             "posture": fam_posture, "lbnp_mmHg": float(lb), "value": base * 0.9 ** (-lb / 10)})
+    out = lbnp_slopes(pd.DataFrame(rows)).set_index("family")
+    assert set(out.index) == {"supine", "hdt15"}
+    assert out.loc["supine", "median_pct_per_10mmHg"] == pytest.approx(-10.0, abs=0.01)
+
+
+# --------------------------------------------------------------------------- real outputs (skipped if absent)
+REPORTS = REPO / "reports"
+
+
+@pytest.mark.skipif(not (REPO / "data/processed/ijv_gravity_cohort_real.csv").exists(), reason="run pipeline")
+def test_real_ijv_cohort_geometry_columns():
+    df = pd.read_csv(REPO / "data/processed/ijv_gravity_cohort_real.csv")
+    assert df["subject_id"].nunique() == 12 and set(df["provenance"]) == {"raw_individual"}
+    assert np.allclose(np.cos(np.radians(df["posture_deg"])), df["gz_body"], atol=1e-3)
+    assert set(df["dataset"]) == {"bhp_carotid_jugular"}  # public file: MIT data only
+
+
+@pytest.mark.skipif(not (REPORTS / "physiology_real/tilt_slopes_summary.csv").exists(), reason="run pipeline")
+def test_real_ijv_area_decreases_with_gz_body_in_everyone():
+    s = pd.read_csv(REPORTS / "physiology_real/tilt_slopes_summary.csv")
+    area = s[(s.variable == "ijv_area") & (~s.plausible_only)]
+    assert len(area) == 2 and (area["ci_high"] < 0).all() and (area["fraction_negative"] == 1.0).all()
+
+
 def test_preprocess_ubfc_is_idempotent_and_rebuilds_on_param_change(tmp_path, monkeypatch):
     """Second run reuses the session files; a different grid rate forces a rebuild (no real data needed)."""
     import vascushift.data.ubfc as ubfc
