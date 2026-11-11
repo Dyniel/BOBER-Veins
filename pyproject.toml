@@ -34,7 +34,15 @@ dev = [
     "ruff>=0.1.0",
 ]
 cv = [
-    "opencv-python>=4.5.0",
+    # OpenCV 5 moved the Haar face cascades out of the main package
+    "opencv-python-headless>=4.8,<5",
+]
+data = [
+    # dataset download + readers (UBFC-rPPG, PhysioNet); video decoding also needs a system ffmpeg
+    "gdown>=5.0",
+    "wfdb>=4.1",
+    "openpyxl>=3.1",
+    "opencv-python-headless>=4.8,<5",
 ]
 demo = [
     "streamlit>=1.20.0",
