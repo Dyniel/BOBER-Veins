@@ -46,3 +46,19 @@ synthetic:
   gravity_grid: [0.0, 0.16, 0.25, 0.38, 0.50, 0.75, 1.0]
   seed: 42
 
+
+# Outputs of `python -m vascushift.cli pipeline` (common formats: src/vascushift/data/schema.py, docs/data_dictionary.md)
+processed_outputs:
+  optical_sessions_index: "data/processed/rppg/sessions.csv"          # in git
+  optical_sessions_dir: "data/processed/rppg/sessions"                # waveforms - NOT in git (UBFC agreement)
+  optical_grid_hz: 30.0
+  optical_max_interp_gap_s: 0.25
+  physiology_long_public: "data/processed/physiology_long.csv"        # licensed sources only
+  physiology_long_internal: "data/processed/internal/physiology_long_all.csv"   # + unlicensed BHP, NOT in git
+  real_ijv_cohort_public: "data/processed/ijv_gravity_cohort_real.csv"          # 12 people, MIT
+  real_ijv_cohort_internal: "data/processed/internal/ijv_gravity_cohort_real_24.csv"
+  rppg_baseline_reports: "reports/rppg_baseline"
+  physiology_reports: "reports/physiology_real"
+  dashboard_public_bundle: "demo/data/public/dashboard_data.js"
+  dashboard_local_bundle: "demo/data/local/dashboard_local.js"        # NOT in git
+  manifest: "reports/pipeline_manifest.json"
