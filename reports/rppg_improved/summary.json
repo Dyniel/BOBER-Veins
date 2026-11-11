@@ -1,0 +1,173 @@
+{
+  "available": true,
+  "status": "EXPERIMENTAL - chosen on TUNE half, confirmed on HOLDOUT (docs/experiments_rppg.md)",
+  "config": {
+    "roi_variant": "interp15|fullbox",
+    "method": "pos",
+    "tracker": "viterbi",
+    "sigma_bpm": 10.0,
+    "window_s": 10.0,
+    "stride_s": 2.0,
+    "min_valid": 0.9,
+    "abstain_tune_quantile": 0.1
+  },
+  "abstain_quality_threshold": 0.5168,
+  "summary": [
+    {
+      "group": "all",
+      "n_sessions": 50,
+      "n_windows": 1495,
+      "mae_bpm": 0.985,
+      "rmse_bpm": 3.056,
+      "within5_pct": 97.06,
+      "gross10_pct": 2.27,
+      "abstain_kept_pct": 85.6,
+      "abstain_mae_bpm": 0.513,
+      "abstain_within5_pct": 99.77,
+      "abstain_gross10_pct": 0.23
+    },
+    {
+      "group": "split=holdout",
+      "n_sessions": 29,
+      "n_windows": 887,
+      "mae_bpm": 1.234,
+      "rmse_bpm": 3.728,
+      "within5_pct": 95.83,
+      "gross10_pct": 3.38,
+      "abstain_kept_pct": 82.5,
+      "abstain_mae_bpm": 0.584,
+      "abstain_within5_pct": 99.59,
+      "abstain_gross10_pct": 0.41
+    },
+    {
+      "group": "split=tune",
+      "n_sessions": 21,
+      "n_windows": 608,
+      "mae_bpm": 0.622,
+      "rmse_bpm": 1.638,
+      "within5_pct": 98.85,
+      "gross10_pct": 0.66,
+      "abstain_kept_pct": 90.0,
+      "abstain_mae_bpm": 0.418,
+      "abstain_within5_pct": 100.0,
+      "abstain_gross10_pct": 0.0
+    },
+    {
+      "group": "subset=DATASET_1",
+      "n_sessions": 8,
+      "n_windows": 288,
+      "mae_bpm": 2.458,
+      "rmse_bpm": 6.284,
+      "within5_pct": 88.54,
+      "gross10_pct": 9.72,
+      "abstain_kept_pct": 82.6,
+      "abstain_mae_bpm": 0.803,
+      "abstain_within5_pct": 98.74,
+      "abstain_gross10_pct": 1.26
+    },
+    {
+      "group": "subset=DATASET_2",
+      "n_sessions": 42,
+      "n_windows": 1207,
+      "mae_bpm": 0.634,
+      "rmse_bpm": 1.464,
+      "within5_pct": 99.09,
+      "gross10_pct": 0.5,
+      "abstain_kept_pct": 86.2,
+      "abstain_mae_bpm": 0.447,
+      "abstain_within5_pct": 100.0,
+      "abstain_gross10_pct": 0.0
+    },
+    {
+      "group": "holdout,subset=DATASET_1",
+      "n_sessions": 8,
+      "n_windows": 288,
+      "mae_bpm": 2.458,
+      "rmse_bpm": 6.284,
+      "within5_pct": 88.54,
+      "gross10_pct": 9.72,
+      "abstain_kept_pct": 82.6,
+      "abstain_mae_bpm": 0.803,
+      "abstain_within5_pct": 98.74,
+      "abstain_gross10_pct": 1.26
+    },
+    {
+      "group": "holdout,subset=DATASET_2",
+      "n_sessions": 21,
+      "n_windows": 599,
+      "mae_bpm": 0.645,
+      "rmse_bpm": 1.263,
+      "within5_pct": 99.33,
+      "gross10_pct": 0.33,
+      "abstain_kept_pct": 82.5,
+      "abstain_mae_bpm": 0.479,
+      "abstain_within5_pct": 100.0,
+      "abstain_gross10_pct": 0.0
+    }
+  ],
+  "baseline_pos_summary": [
+    {
+      "group": "all",
+      "n_sessions": 50,
+      "n_windows": 1495,
+      "mae_bpm": 1.597,
+      "rmse_bpm": 6.25,
+      "within5_pct": 95.65,
+      "gross10_pct": 3.55
+    },
+    {
+      "group": "split=holdout",
+      "n_sessions": 29,
+      "n_windows": 887,
+      "mae_bpm": 1.738,
+      "rmse_bpm": 6.148,
+      "within5_pct": 94.48,
+      "gross10_pct": 4.28
+    },
+    {
+      "group": "split=tune",
+      "n_sessions": 21,
+      "n_windows": 608,
+      "mae_bpm": 1.39,
+      "rmse_bpm": 6.397,
+      "within5_pct": 97.37,
+      "gross10_pct": 2.47
+    },
+    {
+      "group": "subset=DATASET_1",
+      "n_sessions": 8,
+      "n_windows": 288,
+      "mae_bpm": 2.874,
+      "rmse_bpm": 7.667,
+      "within5_pct": 87.85,
+      "gross10_pct": 9.72
+    },
+    {
+      "group": "subset=DATASET_2",
+      "n_sessions": 42,
+      "n_windows": 1207,
+      "mae_bpm": 1.292,
+      "rmse_bpm": 5.862,
+      "within5_pct": 97.51,
+      "gross10_pct": 2.07
+    },
+    {
+      "group": "holdout,subset=DATASET_1",
+      "n_sessions": 8,
+      "n_windows": 288,
+      "mae_bpm": 2.874,
+      "rmse_bpm": 7.667,
+      "within5_pct": 87.85,
+      "gross10_pct": 9.72
+    },
+    {
+      "group": "holdout,subset=DATASET_2",
+      "n_sessions": 21,
+      "n_windows": 599,
+      "mae_bpm": 1.193,
+      "rmse_bpm": 5.264,
+      "within5_pct": 97.66,
+      "gross10_pct": 1.67
+    }
+  ]
+}
