@@ -1,0 +1,7 @@
+variant,split,n_sessions,n_windows,mae,rmse,within5_pct,gross_gt10_pct,median_ae
+E9_pos,tune,21,608,1.255,6.11,97.7,1.97,0.349
+E9_pos_vit,tune,21,608,0.622,1.638,98.85,0.66,0.351
+E9_pos_motreg,tune,21,608,1.171,5.559,97.86,1.81,0.35
+E9_pos_motreg_vit,tune,21,608,0.624,1.671,98.68,0.82,0.344
+E9_pos_motreg_lags,tune,21,608,1.37,6.029,97.37,2.3,0.401
+E9_pos_motreg_lags_vit,tune,21,608,0.699,1.782,98.52,0.99,0.395

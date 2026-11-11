@@ -59,6 +59,15 @@ def cmd_preprocess(args: argparse.Namespace) -> None:
         print(f"physiology ({k}): {v}")
 
 
+def cmd_rppg_baseline(args: argparse.Namespace) -> None:
+    from vascushift.optical.benchmark import run_rppg_baseline
+
+    print("=== [CLI] rPPG BASELINE ON REAL UBFC-rPPG (windowed) ===")
+    run_rppg_baseline(processed_dir=Path(args.data_dir) / "processed" / "rppg", out_dir=Path(args.out_dir),
+                      min_valid=args.min_valid)
+    print(f"Saved to {args.out_dir}/ (windows.csv, summary.csv/.json/.md)")
+
+
 def cmd_simulate(args: argparse.Namespace) -> None:
     print("=== [CLI] FORWARD VENOUS HEMODYNAMIC SIMULATION ===")
     sim = VenousHemodynamicSimulator()
@@ -176,6 +185,11 @@ def main() -> None:
     p_pre.add_argument("--force", action="store_true")
     p_pre.add_argument("--quiet", action="store_true")
 
+    p_rb = subparsers.add_parser("rppg-baseline", help="Windowed Green/CHROM/POS benchmark on real UBFC-rPPG")
+    p_rb.add_argument("--data-dir", default="data")
+    p_rb.add_argument("--out-dir", default="reports/rppg_baseline")
+    p_rb.add_argument("--min-valid", type=float, default=0.9)
+
     p_sim = subparsers.add_parser("simulate", help="Forward physiological simulation")
     p_sim.add_argument("--config", default="configs/physics_model.yaml")
 
@@ -200,6 +214,8 @@ def main() -> None:
         cmd_data_audit(args)
     elif args.command == "preprocess":
         cmd_preprocess(args)
+    elif args.command == "rppg-baseline":
+        cmd_rppg_baseline(args)
     elif args.command == "simulate":
         cmd_simulate(args)
     elif args.command == "train-physics":
