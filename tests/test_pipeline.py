@@ -43,7 +43,10 @@ def test_preprocessed_index_and_session_files():
     if len(d2):
         assert (d2["frame_clock"] == "gt_frame_clock").all()
         assert d2.loc[d2.session_id == "ubfc-d2-subject27", "no_face_display"].all()
-    s = load_optical_session(PROCESSED / idx["file"].iloc[0])
+    first = PROCESSED / idx["file"].iloc[0]
+    if not first.exists():
+        pytest.skip("session waveforms are not in git (UBFC agreement); run `vascushift.cli preprocess`")
+    s = load_optical_session(first)
     n = len(s["time"])
     assert s["rgb_traces"].shape == (n, 3) and len(s["ref_bvp"]) == len(s["valid"]) == n
     assert np.allclose(np.diff(s["time"]), 1 / 30.0)
