@@ -1,14 +1,26 @@
 """
-ESA Headward Fluid Shift Dataset Loader and Audit Interface.
+ESA Headward Fluid Shift dataset loader.
 
-Handles both the official ESA HREDA metadata investigation records (DOI: 10.57780/esa-0ggni9p)
-and the validated peer-reviewed campaign measurements from the study:
-"Determining the Dose Response Profile of the Headward Fluid Shift during Varying Gravity Levels"
-(Lee et al., Frontiers in Physiology 2020, 11:863, DOI: 10.3389/fphys.2020.00863).
+DATA AUDIT 2026-11-04 (see docs/data_audit.md) - read before using this module:
+
+* The ESA HREDA investigation HeadwardFluidShift_PARA (DOI 10.57780/esa-0ggni9p,
+  82nd ESA/NASA parabolic flight campaign, June 2023, PI S.M.C. Lee) exists, but
+  HREDA reports data_available=False, 0 files, results "under evaluation".
+  No individual data can be downloaded.
+* Lee et al., Front Physiol 2020 (DOI 10.3389/fphys.2020.00863) is a DIFFERENT,
+  earlier campaign (1st ISLSWG campaign, June 2018, no 0-G parabolas). It
+  publishes only group means / 95% CI; individual data are on request from
+  NASA LSDA.
+* Therefore ``generate_synthetic_esa_like_cohort()`` (formerly
+  ``get_verified_published_cohort``) is SYNTHETIC: np.random draws around the
+  Lee 2020 group means. Several of its variables are not in the paper at all
+  (IJV pressure for all subjects/levels, supine HR/MAP). Never report results
+  on it as "real ESA data". Real group-level values: ``vascushift.data.literature``.
 """
 
 import os
 import json
+import warnings
 import urllib.request
 import urllib.parse
 from pathlib import Path
@@ -65,11 +77,14 @@ def query_hreda_tap(timeout_sec: float = 8.0) -> Dict[str, Any]:
     }
 
 
-def get_verified_published_cohort() -> pd.DataFrame:
+def generate_synthetic_esa_like_cohort() -> pd.DataFrame:
     """
-    Constructs the verified 9-subject experimental dataset matching the peer-reviewed
-    measurements published in Lee et al. (Frontiers in Physiology 2020, 11:863;
-    82nd PFC protocol / NASA Study 508).
+    SYNTHETIC 9-subject x 5-condition table drawn with ``np.random.RandomState(42)``
+    around the group means of Lee et al. (Frontiers in Physiology 2020, 11:863).
+    It is NOT measured data: individual values are invented, and IJV pressure
+    (all rows), supine HR/MAP and the 0.75/1.00-G pressures do not exist in the
+    paper. The ``provenance`` column says so. The supine row is encoded as
+    ``gz=0.0`` although the measurement was 1-G supine on the ground.
 
     Nine healthy participants (5 female, 4 male) evaluated across:
       - 1.00 Gz seated (baseline ground/flight)
@@ -86,13 +101,11 @@ def get_verified_published_cohort() -> pd.DataFrame:
       - heart_rate_bpm: Heart rate (bpm)
       - mean_arterial_pressure_mmHg: Mean arterial pressure (mmHg)
     """
-    # Deterministic generation anchored to exact individual and cohort statistics from Lee et al. 2020
-    # Group Means & 95% CIs reported in Table 2 and Table 3:
-    # 1.00-Gz seated: Area 12 mm2 (9-16), MAP 95 mmHg (79-111), HR 60 (51-68), IVC 1.68 cm, CCA 786 mL/min
-    # 0.75-Gz seated: Area 24 mm2 (13-35), MAP 89 mmHg (74-103), HR 58 (51-66), IVC 1.66 cm, CCA 895 mL/min
-    # 0.50-Gz seated: Area 34 mm2 (21-46), MAP 85 mmHg (66-103), HR 56 (49-63), IVC 1.81 cm, CCA 845 mL/min
-    # 0.25-Gz seated: Area 68 mm2 (40-97), MAP 80 mmHg (66-94), HR 56 (49-62), IVC 1.69 cm, CCA 826 mL/min
-    # 1.00-Gz supine: Area 108 mm2 (74-131), MAP 88 mmHg (72-104), HR 57 (50-65), IVC 1.81 cm, CCA 836 mL/min
+    # Group means used as centres of the random draws. Area/IVC/CCA and seated HR/MAP are
+    # from Lee 2020 Tables 2-3. NOT in the paper (invented by the original author of this
+    # function): the supine MAP/HR, every IJV pressure mean/SD below, and all SD values.
+    # Lee 2020 reports IJV pressure only as 9.5 +/- 3.4 (0.50 G) and 19.1 +/- 7.6 mmHg
+    # (1-G supine), n = 5 - see vascushift.data.literature.
 
     rng = np.random.RandomState(42)
     subjects = [f"sub-{i+1:02d}" for i in range(9)]
@@ -137,11 +150,22 @@ def get_verified_published_cohort() -> pd.DataFrame:
                 "heart_rate_bpm": round(hr_val, 1),
                 "mean_arterial_pressure_mmHg": round(map_val, 1),
                 "IJV_flow_score": flow_score,
-                "provenance": "Lee_et_al_2020_Frontiers_PFC82",
+                "provenance": "SYNTHETIC_random_draws_around_Lee2020_group_means",
             })
 
     df = pd.DataFrame(records)
     return df
+
+
+def get_verified_published_cohort() -> pd.DataFrame:
+    """Deprecated misleading name kept for backward compatibility; the data are synthetic."""
+    warnings.warn(
+        "get_verified_published_cohort() returns SYNTHETIC data; use generate_synthetic_esa_like_cohort() "
+        "or vascushift.data.literature for real published values",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return generate_synthetic_esa_like_cohort()
 
 
 def load_esa_data(
@@ -150,8 +174,9 @@ def load_esa_data(
 ) -> Tuple[pd.DataFrame, DataQualityReport, Dict[str, Any]]:
     """
     Loads the ESA Headward Fluid Shift dataset.
-    If raw CSV/Excel files are present in `data_dir/raw/esa`, loads and harmonizes them.
-    Otherwise, loads the verified published cohort and queries HREDA metadata status.
+    If raw CSV/Excel files are present in `data_dir/raw/esa` (e.g. obtained from the PI or
+    NASA LSDA), loads the first one. Otherwise falls back to the SYNTHETIC ESA-like cohort
+    (``metadata["source"] == "synthetic_esa_like_cohort"``) and queries HREDA status.
 
     Returns:
         (DataFrame, DataQualityReport, metadata_dict)
@@ -164,7 +189,7 @@ def load_esa_data(
 
     # Check for raw user files
     df = None
-    source = "verified_published"
+    source = "synthetic_esa_like_cohort"
     if prefer_raw and raw_path.exists():
         raw_files = list(raw_path.glob("*.csv")) + list(raw_path.glob("*.xlsx"))
         if raw_files:
@@ -179,7 +204,7 @@ def load_esa_data(
                 df = None
 
     if df is None:
-        df = get_verified_published_cohort()
+        df = generate_synthetic_esa_like_cohort()
 
     # Save to processed directory for reproducible downstream use
     os.makedirs(Path(data_dir) / "processed", exist_ok=True)
@@ -192,7 +217,8 @@ def load_esa_data(
     hreda_status = query_hreda_tap()
 
     metadata = {
-        "dataset_name": "ESA Headward Fluid Shift",
+        "dataset_name": "ESA Headward Fluid Shift (synthetic stand-in unless source starts with raw_file)",
+        "is_synthetic": source == "synthetic_esa_like_cohort",
         "investigation_acronym": ESA_ACRONYM,
         "doi": ESA_DOI,
         "source": source,
