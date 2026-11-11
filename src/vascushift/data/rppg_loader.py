@@ -1,6 +1,10 @@
 """
-rPPG Dataset Loader and Benchmarking Dataset Generator.
-Supports public UBFC-rPPG / PURE formats and deterministic synthetic pulse recordings.
+rPPG dataset loader and synthetic benchmark generator.
+
+Real data: UBFC-rPPG via ``vascushift.data.ubfc`` (the previous loader looked for
+``ground_truth.txt`` + a pre-computed ``rgb_traces.npy`` that nothing produced, so
+it always fell back to synthetic data). Synthetic sessions are labelled
+``is_real=False`` and must not be reported as measured.
 """
 
 from pathlib import Path
@@ -78,54 +82,51 @@ def load_rppg_benchmark_cohort(
     data_dir: Optional[str] = None,
     n_synthetic_subjects: int = 10,
     seed: int = 42,
+    source: str = "auto",
+    subsets: Tuple[str, ...] = ("DATASET_2",),
+    max_sessions: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
     """
-    Loads or generates an optical rPPG cohort for algorithm benchmarking.
-    If real UBFC-rPPG folders exist in `data_dir/raw/rppg/`, parses them.
-    Otherwise, generates a standardized subject-independent benchmark cohort.
+    Loads an optical rPPG cohort for algorithm benchmarking.
+
+    Args:
+        source: ``"ubfc"`` - real UBFC-rPPG sessions (videos under
+            ``data_dir/raw/rppg/UBFC-rPPG``; RGB traces are extracted once and
+            cached in ``data_dir/interim/ubfc_rgb``); ``"synthetic"`` - the
+            sinusoidal benchmark generator; ``"auto"`` (default) - UBFC if at
+            least one video of the requested subsets is on disk, otherwise
+            synthetic (with a warning). Every session carries ``is_real``.
+        subsets: UBFC sub-datasets to use (DATASET_2 is the standard benchmark).
+        max_sessions: optional cap on the number of real sessions.
     """
-    cohort = []
-    rppg_path = Path(data_dir or "data") / "raw" / "rppg"
+    import warnings
 
-    # Check for real datasets
-    if rppg_path.exists():
-        sub_dirs = [d for d in rppg_path.iterdir() if d.is_dir()]
-        for sd in sub_dirs:
-            # Check for UBFC-rPPG format: vid.avi + ground_truth.txt
-            gt_file = sd / "ground_truth.txt"
-            if gt_file.exists():
-                try:
-                    # UBFC ground_truth.txt has 3 rows: Trace, HR, Time
-                    gt_data = np.loadtxt(gt_file)
-                    if gt_data.ndim == 2 and gt_data.shape[0] >= 2:
-                        ref_bvp = gt_data[0]
-                        ref_hr = float(np.mean(gt_data[1]))
-                        # If RGB traces cached:
-                        rgb_file = sd / "rgb_traces.npy"
-                        if rgb_file.exists():
-                            rgb_traces = np.load(rgb_file)
-                            cohort.append({
-                                "subject_id": sd.name,
-                                "fs": 30.0,
-                                "rgb_traces": rgb_traces,
-                                "ref_bvp": ref_bvp,
-                                "ref_hr_bpm": ref_hr,
-                                "is_real": True,
-                            })
-                except Exception:
-                    pass
+    data_dir = data_dir or "data"
+    cohort: List[Dict[str, Any]] = []
 
-    # If no real data found, generate reproducible benchmark cohort
-    if len(cohort) == 0:
+    if source in ("auto", "ubfc"):
+        from vascushift.data.ubfc import list_ubfc_sessions, load_ubfc_session
+
+        root = Path(data_dir) / "raw" / "rppg" / "UBFC-rPPG"
+        sessions = [s for s in list_ubfc_sessions(root, subsets=subsets) if s.has_video]
+        if max_sessions is not None:
+            sessions = sessions[:max_sessions]
+        for s in sessions:
+            cohort.append(load_ubfc_session(s, cache_dir=Path(data_dir) / "interim" / "ubfc_rgb"))
+        if source == "ubfc" and not cohort:
+            raise FileNotFoundError(
+                f"No UBFC-rPPG videos for {subsets} under {root}; run scripts/download_data.py --dataset ubfc")
+
+    if not cohort:
+        if source == "auto":
+            warnings.warn("No real rPPG videos found - falling back to the SYNTHETIC rPPG cohort", RuntimeWarning,
+                          stacklevel=2)
         rng = np.random.RandomState(seed)
-        # Rates from 52 to 92 BPM covering physiological resting and elevated HR
         hr_pool = rng.uniform(55.0, 88.0, size=n_synthetic_subjects)
         noise_pool = rng.uniform(0.08, 0.22, size=n_synthetic_subjects)
-
         for i in range(n_synthetic_subjects):
-            sub_id = f"opt-bench-{i+1:02d}"
             sess = generate_synthetic_rppg_session(
-                subject_id=sub_id,
+                subject_id=f"opt-bench-{i+1:02d}",
                 duration_sec=40.0,
                 fs=30.0,
                 heart_rate_bpm=round(float(hr_pool[i]), 1),
@@ -136,4 +137,3 @@ def load_rppg_benchmark_cohort(
             cohort.append(sess)
 
     return cohort
-
