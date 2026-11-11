@@ -122,6 +122,19 @@ pip install -e .
 pytest tests/
 ```
 
+### Real-data pipeline (data → baselines → dashboard)
+```bash
+pip install -e ".[dev,data]"                     # + system ffmpeg/ffprobe for the UBFC videos
+python scripts/download_data.py --dataset all    # PhysioNet + BHP-Lab GitHub + HREDA snapshot + UBFC-rPPG (~92 GB)
+python scripts/run_roi_variants.py               # optional (~5 min): per-frame face boxes for the experimental improved rPPG track
+python -m vascushift.cli pipeline --online       # audit -> preprocess -> rPPG baseline (+ improved) -> physiology -> figures -> dashboard
+python -m vascushift.cli demo --open-browser     # dashboard on the real outputs (demo/)
+```
+Outputs: `reports/rppg_baseline/` (optical layer on 50 real UBFC recordings, [`docs/rppg_baseline.md`](docs/rppg_baseline.md)),
+`reports/physiology_real/` (IJV / IJVP / HR vs gravity vector on real tilt, PRCP and published flight/ISS data,
+[`docs/physiology_first_analysis.md`](docs/physiology_first_analysis.md)), `reports/pipeline_manifest.json`
+(versions + checksums). HREDA status and fallback: [`docs/hreda_fallback_plan.md`](docs/hreda_fallback_plan.md).
+
 ### Execute Standard Commands
 ```bash
 # 1. Audit real ESA HREDA data availability and local files

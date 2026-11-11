@@ -68,6 +68,33 @@ def cmd_rppg_baseline(args: argparse.Namespace) -> None:
     print(f"Saved to {args.out_dir}/ (windows.csv, summary.csv/.json/.md)")
 
 
+def cmd_physiology_analysis(args: argparse.Namespace) -> None:
+    from vascushift.analysis.gravity_physiology import run_gravity_physiology_analysis
+    from vascushift.visualization.data_figures import make_physiology_figures
+
+    print("=== [CLI] REAL PHYSIOLOGY vs GRAVITY VECTOR (HREDA fallback) ===")
+    run_gravity_physiology_analysis(data_dir=Path(args.data_dir), out_dir=Path(args.out_dir), internal=not args.public_only)
+    for k, v in make_physiology_figures(Path(args.out_dir)).items():
+        print(f"  figure {k}: {v}")
+
+
+def cmd_dashboard_export(args: argparse.Namespace) -> None:
+    from vascushift.visualization.dashboard_export import export_dashboard_data
+
+    print(export_dashboard_data(data_dir=Path(args.data_dir), reports_dir=Path("reports"), demo_dir=Path("demo")))
+
+
+def cmd_pipeline(args: argparse.Namespace) -> None:
+    from vascushift.pipeline import PipelineContext, run_pipeline
+
+    ctx = PipelineContext(data_dir=Path(args.data_dir), online=args.online, force=args.force, verbose=not args.quiet)
+    ctx = run_pipeline(stages=args.stages or None, ctx=ctx)
+    print("\n=== pipeline summary ===")
+    for k, v in ctx.results.items():
+        print(f"  {k:11s} {v.get('seconds', '')} s")
+    print("Dashboard: python -m vascushift.cli demo --open-browser   (or open demo/index.html)")
+
+
 def cmd_simulate(args: argparse.Namespace) -> None:
     print("=== [CLI] FORWARD VENOUS HEMODYNAMIC SIMULATION ===")
     sim = VenousHemodynamicSimulator()
@@ -190,6 +217,21 @@ def main() -> None:
     p_rb.add_argument("--out-dir", default="reports/rppg_baseline")
     p_rb.add_argument("--min-valid", type=float, default=0.9)
 
+    p_pa = subparsers.add_parser("physiology-analysis", help="Real IJV/IJVP/HR vs gravity vector analysis + figures")
+    p_pa.add_argument("--data-dir", default="data")
+    p_pa.add_argument("--out-dir", default="reports/physiology_real")
+    p_pa.add_argument("--public-only", action="store_true", help="skip the internal (unlicensed) variant")
+
+    p_de = subparsers.add_parser("dashboard-export", help="Write demo/data bundles from pipeline outputs")
+    p_de.add_argument("--data-dir", default="data")
+
+    p_pipe = subparsers.add_parser("pipeline", help="Run the whole real-data pipeline (audit -> ... -> dashboard)")
+    p_pipe.add_argument("--data-dir", default="data")
+    p_pipe.add_argument("--stages", nargs="*", help="subset of: check audit preprocess rppg physiology figures dashboard manifest")
+    p_pipe.add_argument("--online", action="store_true", help="query ESA HREDA live in the audit stage")
+    p_pipe.add_argument("--force", action="store_true", help="rebuild preprocessed sessions")
+    p_pipe.add_argument("--quiet", action="store_true")
+
     p_sim = subparsers.add_parser("simulate", help="Forward physiological simulation")
     p_sim.add_argument("--config", default="configs/physics_model.yaml")
 
@@ -216,6 +258,12 @@ def main() -> None:
         cmd_preprocess(args)
     elif args.command == "rppg-baseline":
         cmd_rppg_baseline(args)
+    elif args.command == "physiology-analysis":
+        cmd_physiology_analysis(args)
+    elif args.command == "dashboard-export":
+        cmd_dashboard_export(args)
+    elif args.command == "pipeline":
+        cmd_pipeline(args)
     elif args.command == "simulate":
         cmd_simulate(args)
     elif args.command == "train-physics":

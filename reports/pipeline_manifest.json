@@ -1,0 +1,493 @@
+{
+  "generated_utc": "2026-11-05T07:59:19Z",
+  "git_commit": "64920490b80b0765eccc02091778a5fe471fe6ca",
+  "git_dirty": true,
+  "python": "3.12.14",
+  "platform": "Linux-7.2.15-200.fc44.x86_64-x86_64-with-glibc2.43",
+  "packages": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "scipy": "1.18.1"
+  },
+  "stages": {
+    "check": {
+      "ubfc_rppg_videos": {
+        "present": true,
+        "path": "data/raw/rppg/UBFC-rPPG",
+        "how_to_get": null
+      },
+      "physionet": {
+        "present": true,
+        "path": "data/raw/physionet/prcp",
+        "how_to_get": null
+      },
+      "bhp_github": {
+        "present": true,
+        "path": "data/raw/github/carotid-jugular-characteristics",
+        "how_to_get": null
+      },
+      "seconds": 0.0
+    },
+    "audit": {
+      "out": "reports/data_audit",
+      "online": true,
+      "hreda_headward_fluid_shift": {
+        "data_available": false,
+        "n_files": 0,
+        "last_update_date": "2026-01-21T12:07:30.224"
+      },
+      "hreda_error": null,
+      "seconds": 9.21
+    },
+    "preprocess": {
+      "ubfc_sessions": 50,
+      "physiology": {
+        "public": "data/processed/physiology_long.csv",
+        "internal": "data/processed/internal/physiology_long_all.csv"
+      },
+      "cohorts": {
+        "public": "data/processed/ijv_gravity_cohort_real.csv",
+        "internal": "data/processed/internal/ijv_gravity_cohort_real_24.csv"
+      },
+      "seconds": 5.61
+    },
+    "rppg": {
+      "n_sessions": 50,
+      "pos_w10s2": [
+        {
+          "subset": "DATASET_1",
+          "protocol": "w10s2",
+          "method": "pos",
+          "n_sessions": 8,
+          "n_windows": 288,
+          "n_excluded": 0,
+          "mae_bpm": 2.874,
+          "mae_ci_low": 0.405,
+          "mae_ci_high": 7.691,
+          "rmse_bpm": 7.667,
+          "mape_pct": 3.65,
+          "pearson_r": 0.9088,
+          "bias_bpm": -1.915,
+          "loa_low_bpm": -16.491,
+          "loa_high_bpm": 12.66,
+          "acc_within_5bpm_pct": 87.8,
+          "median_snr_db": 6.65
+        },
+        {
+          "subset": "DATASET_2",
+          "protocol": "w10s2",
+          "method": "pos",
+          "n_sessions": 42,
+          "n_windows": 1207,
+          "n_excluded": 4,
+          "mae_bpm": 1.292,
+          "mae_ci_low": 0.769,
+          "mae_ci_high": 1.928,
+          "rmse_bpm": 5.862,
+          "mape_pct": 1.34,
+          "pearson_r": 0.9481,
+          "bias_bpm": -0.684,
+          "loa_low_bpm": -12.101,
+          "loa_high_bpm": 10.732,
+          "acc_within_5bpm_pct": 97.5,
+          "median_snr_db": 5.32
+        }
+      ],
+      "seconds": 3.35
+    },
+    "rppg_improved": {
+      "available": true,
+      "holdout": {
+        "group": "split=holdout",
+        "n_sessions": 29,
+        "n_windows": 887,
+        "mae_bpm": 1.234,
+        "rmse_bpm": 3.728,
+        "within5_pct": 95.83,
+        "gross10_pct": 3.38,
+        "abstain_kept_pct": 82.5,
+        "abstain_mae_bpm": 0.584,
+        "abstain_within5_pct": 99.59,
+        "abstain_gross10_pct": 0.41
+      },
+      "seconds": 6.85
+    },
+    "physiology": {
+      "public_subjects": {
+        "bhp_carotid_jugular": 12,
+        "physionet_prcp": 10
+      },
+      "internal_subjects": {
+        "bhp_lbnp_dose_response": 24,
+        "bhp_tilt_dose_response": 24,
+        "physionet_prcp": 10
+      },
+      "seconds": 9.8
+    },
+    "figures": {
+      "improvement": "reports/rppg_improved/figures/rppg_improvement_holdout.png",
+      "mae_by_protocol": "reports/rppg_baseline/figures/rppg_mae_by_protocol.png",
+      "scatter_w10s2": "reports/rppg_baseline/figures/rppg_scatter_d2_w10s2.png",
+      "bland_altman_pos": "reports/rppg_baseline/figures/rppg_bland_altman_pos_d2_w10s2.png",
+      "session_errors": "reports/rppg_baseline/figures/rppg_session_errors_whole.png",
+      "ijv_area_vs_gz": "reports/physiology_real/figures/ijv_area_vs_gz_body.png",
+      "ijv_pressure_vs_gz": "reports/physiology_real/figures/ijv_pressure_vs_gz_body.png",
+      "prcp_hr": "reports/physiology_real/figures/prcp_hr_by_posture.png",
+      "poster_two_layers": "reports/figures/data/poster_two_layers.png",
+      "lbnp_internal": "reports/physiology_real/internal/figures/ijv_area_vs_lbnp_INTERNAL.png",
+      "seconds": 1.26
+    },
+    "dashboard": {
+      "public": "demo/data/public/dashboard_data.js",
+      "local": "demo/data/local/dashboard_local.js",
+      "n_sessions": 50,
+      "n_waveforms": 50,
+      "seconds": 1.88
+    }
+  },
+  "input_manifests": [
+    {
+      "manifest": "data/raw/github/LBNP-Dose-Response/_download_manifest.json",
+      "sha256": "a0e4bad94957a413ddf95db749ec6e0c4c2f8a913c8433ff0209fcd21f06b882"
+    },
+    {
+      "manifest": "data/raw/github/carotid-jugular-characteristics/_download_manifest.json",
+      "sha256": "c34b10ecdf8600b964ca06381cc60fb72f9d912d42eb170f8049988de7b969fc"
+    },
+    {
+      "manifest": "data/raw/github/tilt-dose-response/_download_manifest.json",
+      "sha256": "4469983ff631db84573abc2ef90c26195c3b4bff95f6fc9cec2d02f517b30fbd"
+    },
+    {
+      "manifest": "data/raw/physionet/cardioresp-response-orthostat/1.0/_download_manifest.json",
+      "sha256": "b1aaa0637cff6c6e03f62f13e80c83db50fd7f52c0720e121cf88714b1c277d7"
+    },
+    {
+      "manifest": "data/raw/physionet/prcp/1.0.0/_download_manifest.json",
+      "sha256": "e7229d25d48123bedf9bb763fb227883b58515c4db74177d314990bd23333ee7"
+    },
+    {
+      "manifest": "data/raw/physionet/videopulse/1.0.0/_download_manifest.json",
+      "sha256": "aee15d08618da6cc2ca51cc0430b95f0cc9e0ced061c1b5e45dc2480eecdf1f9"
+    },
+    {
+      "manifest": "data/raw/rppg/UBFC-rPPG/_download_manifest.json",
+      "sha256": "2bd84f685960dd97515c660344abd0f3ddd2fa9073450b27f745f418ad86bba7"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "reports/rppg_baseline/figures/rppg_bland_altman_pos_d2_w10s2.png",
+      "bytes": 95524,
+      "sha256": "f4c1ebfa9b87848f58f180cab0e64dca4e20a23235639565db268e49c2627c07",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_baseline/figures/rppg_mae_by_protocol.png",
+      "bytes": 106296,
+      "sha256": "696e921bc9c9cf33c4465c1043e12973cca7bed9849468e902d473a0cea185c4",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_baseline/figures/rppg_scatter_d2_w10s2.png",
+      "bytes": 207304,
+      "sha256": "cfec6aeacbe09e6137198281caacaee6e8c125cc7411c27f1a00b7466f52250b",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_baseline/figures/rppg_session_errors_whole.png",
+      "bytes": 106474,
+      "sha256": "de8315acd9052f97eab15d9818739f61806b3252f1731393e643897cef03d0f2",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_baseline/sessions_whole_recording_errors.csv",
+      "bytes": 3964,
+      "sha256": "f2b78dc07172a6e5aea2637cd0ef641e80e239f02e9ea3e6581a55f00b8aaaa7",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_baseline/summary.csv",
+      "bytes": 1961,
+      "sha256": "e6b038e9065bc04c378276abe61ded37e4f7d5b01446799760111a25f208e321",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_baseline/summary.json",
+      "bytes": 9061,
+      "sha256": "db530f1e30086b9fb68366f4905b0f72e43908664c6ea933911526b22b7cf1ee",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_baseline/summary.md",
+      "bytes": 2411,
+      "sha256": "101992a815a40d75ee580b214d2f49f732482ca2b6469ae75500a1adb16f5ee3",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_baseline/windows.csv",
+      "bytes": 567789,
+      "sha256": "e02080147e1b235efe771c0ab2693c258c59d6888c8591d85f6b05f47b979f9f",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_improved/figures/rppg_improvement_holdout.png",
+      "bytes": 118015,
+      "sha256": "7046e15a212cafe4cc95c91ef56949b6ad79fdc7bf8012fe3b70850b3e378bf4",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_improved/summary.csv",
+      "bytes": 618,
+      "sha256": "9b49002d0ca97f2c47d6e8eb4c50ed026120df4609609e24d5b10f594ba52f05",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_improved/summary.json",
+      "bytes": 4151,
+      "sha256": "a57d9fdf28afae6f54a0681c7e194fdae93f98a3f023066e02590f753a98591e",
+      "internal": false
+    },
+    {
+      "path": "reports/rppg_improved/windows.csv",
+      "bytes": 171235,
+      "sha256": "9cfb3489cceed32c6a830342a1de1986bf8bcb0752c7c956e23d6ea8a6723494",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/collapse_bootstrap.csv",
+      "bytes": 156377,
+      "sha256": "2bec3ae850c9a36bbdf82968e965f7347216b3ff5bab11d214e0e6d1404fa5e9",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/collapse_fit.json",
+      "bytes": 729,
+      "sha256": "93f8490945334013d4404af7ea9c1cf487b0f32060ac4342dfe4717dac5506c5",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/condition_stats.csv",
+      "bytes": 7731,
+      "sha256": "360595bccd9f4c70a15ec0fbd96548552ff7232b3bff45a800d7dcb071f99327",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/figures/ijv_area_vs_gz_body.png",
+      "bytes": 183641,
+      "sha256": "f04791d61d7db4473566014a98abde7d5c3fd0a676e8b8b0d6129108b3b336a2",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/figures/ijv_pressure_vs_gz_body.png",
+      "bytes": 191833,
+      "sha256": "c90177e46587349a5eee84517c1a86564fba30bcfa60f2458506abddf0c1f9d7",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/figures/prcp_hr_by_posture.png",
+      "bytes": 101153,
+      "sha256": "e007657e5db8f3951c25ee8a3c043981e8d8ec4795b9b3b2db6d0cab95f13a1c",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/internal/collapse_bootstrap.csv",
+      "bytes": 156499,
+      "sha256": "2d3b54d0edb03a9c3c6e2270329c12edfa97bf52cb1fb7208ab1b6abf41efe66",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/collapse_fit.json",
+      "bytes": 740,
+      "sha256": "94ac3e4a88906c67a0e55f51c1582af464e25d95b1e7b4c12b06bd12f6cd00de",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/condition_stats.csv",
+      "bytes": 25321,
+      "sha256": "ed0877f6b92f739f810567abf332eaf3932206a71696e2b8f0885e94fb55435f",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/figures/ijv_area_vs_lbnp_INTERNAL.png",
+      "bytes": 101747,
+      "sha256": "a4997c27737b1c2b083b5a2638dcc1182891153ce3620d35e270849dc8f43992",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/lbnp_slopes.csv",
+      "bytes": 242,
+      "sha256": "5714ca3e03f8e442ffb54911a155fd957feea267a7499b02d54e299957fa2d64",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/literature_anchors.csv",
+      "bytes": 9671,
+      "sha256": "a3ceb803f4181c94327775d5189163f83244590d9be37a62c856957b76b212d7",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/paired_ratios.csv",
+      "bytes": 4606,
+      "sha256": "35a8f633835428e18cd66abfeddb44b22080d52242e230a13b5ef9f9c932c214",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/sensitivity.csv",
+      "bytes": 1327,
+      "sha256": "575846253dbfcfa21aa4a43ae2cb404d9c972e7b14830f1e09416b3d5366fcd8",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/subject_level.csv",
+      "bytes": 374602,
+      "sha256": "23ca8cc33319f03abb858ad2a0e14a9cebeff0786e391c994ced27186c9d62b9",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/summary.json",
+      "bytes": 20379,
+      "sha256": "83a9e744e6a8f8065fdd79749315c3f87531e3ebf9927cd137960825a1642875",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/tilt_slopes_subject.csv",
+      "bytes": 49343,
+      "sha256": "6e183ab3388097ae598c5410caf348dcc710b4cfd6e8ed97a1aef1df1f1722c6",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/internal/tilt_slopes_summary.csv",
+      "bytes": 2837,
+      "sha256": "bc3d2cbf833bb3aef606476e615a22f977a2acf0869463402d85e40e87778dcc",
+      "internal": true
+    },
+    {
+      "path": "reports/physiology_real/literature_anchors.csv",
+      "bytes": 9671,
+      "sha256": "a3ceb803f4181c94327775d5189163f83244590d9be37a62c856957b76b212d7",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/paired_ratios.csv",
+      "bytes": 1504,
+      "sha256": "fa309719ae0d211c5916c118b7749b3338570dbf2e9c25444970fb7a92669cae",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/sensitivity.csv",
+      "bytes": 1299,
+      "sha256": "fe7ef2ba47cdac4ef95b37291187fca70ed197b2136736e7aba18ebda701b76b",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/subject_level.csv",
+      "bytes": 41740,
+      "sha256": "b1e885c652604234fba960b72e4165073ca4521d88836a70a00ddd0a28111923",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/summary.json",
+      "bytes": 7452,
+      "sha256": "e8f2492a43e9f9103f1971f21462b2efa787a2685ecf30140d6f4dde38640ffa",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/tilt_slopes_subject.csv",
+      "bytes": 8870,
+      "sha256": "d545e21d5d3c452bb6683a7a2559f16d8c005cab3281993baa156cf1b0911395",
+      "internal": false
+    },
+    {
+      "path": "reports/physiology_real/tilt_slopes_summary.csv",
+      "bytes": 1295,
+      "sha256": "29ab779418bf408c12f8d05a031b28b451a91e638679a58640051f82ba497853",
+      "internal": false
+    },
+    {
+      "path": "reports/data_audit/audit_summary.json",
+      "bytes": 20760,
+      "sha256": "59da1d24a0dc3120baeed52a1d72768ece410593a4cbf7d69b549303a905b258",
+      "internal": false
+    },
+    {
+      "path": "reports/data_audit/ijv_area_vs_gravity.csv",
+      "bytes": 5022,
+      "sha256": "14cc9dcdf4ec058323936c25ce6a949ac2543c5de3a78dfdcfcb53273315cbc8",
+      "internal": false
+    },
+    {
+      "path": "reports/data_audit/internal/ijv_area_vs_gravity_incl_unlicensed.csv",
+      "bytes": 11574,
+      "sha256": "524a14186a2de51e006bd5bec369d6ec3692f3c18c9c185da7047d8dabcd55ec",
+      "internal": true
+    },
+    {
+      "path": "reports/data_audit/literature_aggregates.csv",
+      "bytes": 31232,
+      "sha256": "d136d58fc22d6da8e1d94a6fa44c7ab77b09dc356007f68f91c25efeb76d7b0d",
+      "internal": false
+    },
+    {
+      "path": "reports/data_audit/prcp_conditions.csv",
+      "bytes": 29071,
+      "sha256": "8f9655826dff9e972e33837d1bb002327f410d2d5ffc0f193b5fa1a8a1dce1a1",
+      "internal": false
+    },
+    {
+      "path": "reports/data_audit/ubfc_inventory.csv",
+      "bytes": 8756,
+      "sha256": "9e02041eda27e9f4b659b6d798621193e5ec5c1cfcefbf30ef520fefb7040259",
+      "internal": false
+    },
+    {
+      "path": "data/processed/esa_headward_fluid_shift.csv",
+      "bytes": 4928,
+      "sha256": "04ae5349f5b80e1bb361de928821ac7b44bfd6eea4f1c2f07cec4306198ca1f2",
+      "internal": false
+    },
+    {
+      "path": "data/processed/ijv_gravity_cohort_real.csv",
+      "bytes": 22652,
+      "sha256": "1a8758e5cdc6f87b94d98d3bc93e88e3f4ff113b114706e2f71e5672737299e2",
+      "internal": false
+    },
+    {
+      "path": "data/processed/internal/ijv_gravity_cohort_real_24.csv",
+      "bytes": 48931,
+      "sha256": "f12457ff68bf868d1e19c3a6fca8e4fe1d1b0dd70a7dd4025e17590dd10ef6ee",
+      "internal": true
+    },
+    {
+      "path": "data/processed/internal/physiology_long_all.csv",
+      "bytes": 3332289,
+      "sha256": "abb96c2254cae8e7a695a69ae29699a4010a707acb645085dde43fd8f035bae5",
+      "internal": true
+    },
+    {
+      "path": "data/processed/physiology_long.csv",
+      "bytes": 367236,
+      "sha256": "d9b3c85e12818b56aef14819096cf23c14d006cd5a5d2b39696463e430900847",
+      "internal": false
+    },
+    {
+      "path": "data/processed/rppg/sessions.csv",
+      "bytes": 11838,
+      "sha256": "75ca75c2d1eeec9e8b354028709cf26845c1dace3ace7d7e22470b431034cc26",
+      "internal": false
+    },
+    {
+      "path": "demo/data/local/dashboard_local.json",
+      "bytes": 421874,
+      "sha256": "d673e0d8df56edc5089e7bd4a0bbfe528d742ca8a8f3d0a68df235f804afb47b",
+      "internal": true
+    },
+    {
+      "path": "demo/data/public/dashboard_data.json",
+      "bytes": 160958,
+      "sha256": "f979d85a5b2d59aca603c260f1640372885a023e8bfb51db47afb46151fca022",
+      "internal": false
+    }
+  ],
+  "rule": "real data only; synthetic data never produced by this pipeline"
+}
