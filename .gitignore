@@ -31,6 +31,13 @@ ENV/
 # Data and large binaries (strict adherence: do not commit raw data)
 data/raw/
 data/interim/
+# derived from public-but-unlicensed data: team use only
+reports/data_audit/internal/
+data/processed/internal/
+# waveforms derived from UBFC-rPPG videos/GT (dataset agreement: no redistribution) - metrics are fine
+data/processed/rppg/sessions/
+demo/data/local/
+reports/**/internal/
 *.mp4
 *.avi
 *.mat

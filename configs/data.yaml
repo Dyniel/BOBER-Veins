@@ -13,6 +13,26 @@ dataset:
     processed_dir: "data/processed"
     synthetic_dir: "data/synthetic"
     rppg_dir: "data/raw/rppg"
+    external_dir: "data/external"
+    interim_dir: "data/interim"
+
+# Real datasets (see src/vascushift/data/registry.py; download: scripts/download_data.py)
+real_datasets:
+  ubfc_rppg:
+    path: "data/raw/rppg/UBFC-rPPG"
+    subsets: ["DATASET_2", "DATASET_1"]
+    rgb_cache: "data/interim/ubfc_rgb"
+    no_face_display: ["DATASET_2/subject21", "DATASET_2/subject27"]
+  physionet_prcp:
+    path: "data/raw/physionet/prcp/1.0.0"
+  physionet_cardioresp_orthostat:
+    path: "data/raw/physionet/cardioresp-response-orthostat/1.0"
+  physionet_videopulse:
+    path: "data/raw/physionet/videopulse/1.0.0"
+  literature_aggregates:
+    path: "data/external/literature_aggregates.csv"
+  hreda_snapshot:
+    path: "data/external/hreda/hreda_snapshot.json"
 
 synthetic:
   enabled: true
