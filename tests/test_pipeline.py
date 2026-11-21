@@ -183,6 +183,31 @@ def test_real_ijv_area_decreases_with_gz_body_in_everyone():
     assert len(area) == 2 and (area["ci_high"] < 0).all() and (area["fraction_negative"] == 1.0).all()
 
 
+DASH_PUBLIC = REPO / "demo/data/public/dashboard_data.json"
+
+
+@pytest.mark.skipif(not DASH_PUBLIC.exists(), reason="run pipeline")
+def test_public_dashboard_bundle_has_no_waveforms_or_unlicensed_data():
+    import json
+
+    txt = DASH_PUBLIC.read_text()
+    d = json.loads(txt)  # strict JSON: allow_nan=False at export, so no NaN/Infinity tokens
+    assert "waveforms" not in d and "NaN" not in txt
+    assert "bhp_tilt_dose_response" not in json.dumps(d["physiology"])
+    assert "bhp_lbnp_dose_response" not in json.dumps(d["physiology"])
+    assert d["model"].get("provenance") in ("model", None)
+    assert len(d["rppg"]["sessions"]) == len(pd.read_csv(REPO / "data/processed/rppg/sessions.csv"))
+    js = (REPO / "demo/data/public/dashboard_data.js").read_text()
+    assert js.startswith("window.VASCU_PUBLIC = ")
+
+
+def test_pipeline_rejects_unknown_stage():
+    from vascushift.pipeline import run_pipeline
+
+    with pytest.raises(ValueError):
+        run_pipeline(stages=["preprocess", "train_rocket"])
+
+
 def test_preprocess_ubfc_is_idempotent_and_rebuilds_on_param_change(tmp_path, monkeypatch):
     """Second run reuses the session files; a different grid rate forces a rebuild (no real data needed)."""
     import vascushift.data.ubfc as ubfc
