@@ -3,156 +3,187 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BOBER Veins / VascuShift-GPINN Demonstrator | ISSSP 2026</title>
+  <title>VascuShift Pipeline Dashboard</title>
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Pipeline outputs (python -m vascushift.cli pipeline). Public bundle: metrics from licensed sources. -->
+  <script src="data/public/dashboard_data.js"></script>
+  <!-- Local-only bundle (git-ignored): UBFC waveform excerpts + unlicensed BHP data. Missing = fine. -->
+  <script src="data/local/dashboard_local.js" onerror="window.VASCU_LOCAL = null"></script>
 </head>
 <body>
-  <header class="navbar">
-    <div class="nav-container">
-      <div class="logo">
-        <span class="badge">ISSSP 2026</span>
-        <h1>BOBER Veins / VascuShift-GPINN</h1>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div>
+        <p class="eyebrow">BOBER Veins · VascuShift · ISSSP 2026</p>
+        <h1>What the pipeline measures today</h1>
+        <p class="lede">Every number on this page is computed by <code>python -m vascushift.cli pipeline</code> from real
+          recordings, except the block marked <span class="badge model">MODEL</span>. No public dataset pairs face video with
+          jugular-vein ground truth, so the optical and the physiology layers are validated separately.</p>
       </div>
-      <div class="nav-links">
-        <span class="status-pill online">● Pipeline Operational</span>
-        <span class="meta-tag">ESA PFC82 &middot; 9 Subjects &middot; Microgravity Feasibility</span>
-      </div>
+      <div class="layer-pills" id="layer-pills"></div>
     </div>
   </header>
+  <nav class="tabs-bar" aria-label="Sections">
+    <div class="wrap tabs">
+      <a href="#overview">Overview</a><a href="#optical">Optical layer</a><a href="#physiology">Physiology layer</a>
+      <a href="#bridge">Model bridge</a><a href="#quality">Data quality</a><a href="#data">Data sources</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light or dark theme">Light / dark</button>
+    </div>
+  </nav>
 
-  <main class="dashboard-grid">
-    <!-- Sidebar Controls -->
-    <aside class="controls-panel card">
-      <h2>Simulation & Model Controls</h2>
-      <p class="subtitle">Interactively explore hemodynamics across gravitational fields.</p>
+  <main class="wrap">
+    <div id="no-data" class="notice hidden">
+      <strong>No pipeline output found.</strong> Run <code>python -m vascushift.cli pipeline</code> in the repository, then reload.
+    </div>
 
-      <div class="control-group">
-        <label for="gravity-slider">
-          <strong>Gravitational Load ($G_z$):</strong>
-          <span id="gravity-val" class="param-val">0.00 G (Microgravity)</span>
-        </label>
-        <input type="range" id="gravity-slider" min="0" max="1" step="0.01" value="0.0">
-        <div class="presets">
-          <button class="preset-btn" onclick="setGravity(0.0, '0.00 G (Microgravity / Supine)')">0G (Space)</button>
-          <button class="preset-btn" onclick="setGravity(0.16, '0.16 G (Lunar)')">Moon</button>
-          <button class="preset-btn" onclick="setGravity(0.38, '0.38 G (Martian)')">Mars</button>
-          <button class="preset-btn" onclick="setGravity(0.50, '0.50 G (Parabolic)')">0.5G</button>
-          <button class="preset-btn" onclick="setGravity(1.00, '1.00 G (Earth Seated)')">1G (Earth)</button>
+    <!-- ------------------------------------------------------------------ overview -->
+    <section id="overview" class="section">
+      <h2>Overview</h2>
+      <div class="kpis" id="kpis"></div>
+      <div class="card pipeline-card" id="pipeline-card"></div>
+    </section>
+
+    <!-- ------------------------------------------------------------------ optical -->
+    <section id="optical" class="section">
+      <div class="section-head">
+        <h2>Optical layer · heart rate from face video</h2>
+        <span class="badge real">REAL · UBFC-rPPG</span>
+      </div>
+      <p class="muted" id="rppg-protocol"></p>
+      <div class="filters">
+        <label>Subset <select id="f-subset"><option value="DATASET_2">DATASET 2 · 42 people</option><option value="DATASET_1">DATASET 1 · 8 recordings</option></select></label>
+        <label>Protocol <select id="f-protocol"><option value="w10s2">10 s windows</option><option value="w30s15">30 s windows</option><option value="whole">Whole recording</option></select></label>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Error by method</h3>
+          <div class="chart-box short"><canvas id="c-mae"></canvas></div>
+          <p class="foot">Bar: mean absolute error; whisker: 95 % CI (bootstrap over sessions).</p>
+        </div>
+        <div class="card">
+          <h3>Agreement with the finger pulse oximeter</h3>
+          <div class="table-scroll"><table class="tbl" id="t-methods"></table></div>
+          <p class="foot">LoA: Bland–Altman 95 % limits of agreement. Windows with &lt; 90 % measured samples excluded.</p>
         </div>
       </div>
-
-      <div class="control-group">
-        <label for="posture-select"><strong>Body Posture:</strong></label>
-        <select id="posture-select">
-          <option value="seated">Seated Upright (θ = 0°)</option>
-          <option value="supine">Supine Horizontal (θ = 90°)</option>
-        </select>
+      <div class="card improved hidden" id="improved-card">
+        <div class="card-head"><h3>Experimental improvement · face-box interpolation + HR tracking + abstain</h3>
+          <span class="badge model">EXPERIMENTAL · tuned on half the people</span></div>
+        <p class="muted" id="improved-note"></p>
+        <div class="table-scroll"><table class="tbl" id="t-improved"></table></div>
+        <p class="foot">10 s windows, POS. "Held-out" = the people not used to choose the variant (DATASET 2 odd subjects + all of DATASET 1). Abstain = no reading when the reference-free quality score is below the threshold set on the tuning half. Details: docs/experiments_rppg.md.</p>
       </div>
-
-      <div class="control-group">
-        <label for="model-select"><strong>Active Model Architecture:</strong></label>
-        <select id="model-select">
-          <option value="pinn" selected>VascuShift-PINN (Physics-Informed)</option>
-          <option value="mechanistic">Baseline 2: Pure Mechanistic Compartment</option>
-          <option value="linear">Baseline 1a: Linear Regression Baseline</option>
-          <option value="mean">Baseline 0: Constant Mean Baseline</option>
-        </select>
+      <div class="card">
+        <h3>Every session · whole-recording error</h3>
+        <div class="chart-box short"><canvas id="c-all-sessions"></canvas></div>
+        <p class="foot">One dot per recording and method. Click a dot to open that session below. Values beyond ±30 bpm are drawn at the edge (exact value in the tooltip).</p>
       </div>
-
-      <div class="control-group">
-        <label for="subject-select"><strong>Participant Context (ESA PFC82):</strong></label>
-        <select id="subject-select">
-          <option value="all">Cohort Average (N = 9)</option>
-          <option value="sub-01">Participant sub-01 (F)</option>
-          <option value="sub-02">Participant sub-02 (F)</option>
-          <option value="sub-03">Participant sub-03 (F)</option>
-          <option value="sub-06">Participant sub-06 (M)</option>
-          <option value="sub-07">Participant sub-07 (M)</option>
-        </select>
-      </div>
-
-      <div class="control-group">
-        <label for="noise-slider">
-          <strong>Synthetic Observation Noise (σ):</strong>
-          <span id="noise-val" class="param-val">5.0 %</span>
-        </label>
-        <input type="range" id="noise-slider" min="0" max="0.20" step="0.01" value="0.05">
-      </div>
-
-      <div class="info-box">
-        <strong>Scientific Provenance Notice:</strong>
-        <p>Physiological parameters calibrated on verified ESA/NASA 82nd Parabolic Flight Campaign data. Optical rPPG signals independently validated on video benchmarks. The multimodal optical-to-venous connection is an explicitly synthetic observation model ($y = h(x) + \epsilon$).</p>
-      </div>
-    </aside>
-
-    <!-- Main Output Panels -->
-    <section class="outputs-panel">
-      <!-- KPI Metric Cards -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <span class="kpi-label">Predicted IJV Lumen Area</span>
-          <div class="kpi-value" id="kpi-area">108.0 <span class="unit">mm²</span></div>
-          <span class="kpi-status" id="kpi-area-status">Venous Congestion</span>
+      <div class="card" id="session-card">
+        <div class="card-head">
+          <h3>Session explorer</h3>
+          <label>Session <select id="f-session"></select></label>
         </div>
-        <div class="kpi-card">
-          <span class="kpi-label">Local Venous Pressure</span>
-          <div class="kpi-value" id="kpi-pressure">21.0 <span class="unit">mmHg</span></div>
-          <span class="kpi-status" id="kpi-pressure-status">Engorged Transmural</span>
+        <div class="session-meta" id="session-meta"></div>
+        <div class="grid-2">
+          <div><p class="chart-title">Heart rate over time (10 s windows)</p><div class="chart-box"><canvas id="c-session-hr"></canvas></div></div>
+          <div><p class="chart-title">Pulse waveform, 8 s from the middle <span class="badge local">LOCAL ONLY</span></p>
+            <div class="chart-box"><canvas id="c-wave"></canvas></div>
+            <p class="foot" id="wave-note"></p></div>
         </div>
-        <div class="kpi-card">
-          <span class="kpi-label">Hydrostatic Pressure Drop</span>
-          <div class="kpi-value" id="kpi-hydro">0.0 <span class="unit">mmHg</span></div>
-          <span class="kpi-sub">ΔP = ρ·g·Δh·cos(θ)</span>
+        <p class="foot">Signals only — this dashboard never shows video frames (UBFC subject 27 may not be shown).</p>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------ physiology -->
+    <section id="physiology" class="section">
+      <div class="section-head">
+        <h2>Physiology layer · neck veins vs the gravity vector</h2>
+        <span class="badge real">REAL · individual</span><span class="badge pub">PUBLISHED · group means</span>
+      </div>
+      <p class="muted">gz_body is the head-to-foot component of gravity: sin(tilt) on a tilt table, the platform level in a
+        parabolic flight, 0 lying flat or on the ISS. Lying flat and weightlessness share gz_body = 0 but are not the same state.</p>
+      <div class="filters">
+        <label>Variable <select id="f-var"><option value="ijv_area">IJV cross-sectional area</option><option value="ijv_pressure">IJV pressure</option></select></label>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 id="phys-title-a">Ground tilt · individual data</h3>
+          <div class="chart-box tall"><canvas id="c-tilt"></canvas></div>
+          <p class="foot">Whittle &amp; Diaz-Artiles 2023 (BHP-Lab, MIT). Line: median of people; band: interquartile range.</p>
+          <details><summary>Table view</summary><div class="table-scroll"><table class="tbl" id="t-tilt"></table></div></details>
         </div>
-        <div class="kpi-card">
-          <span class="kpi-label">Optical Heart Rate (POS)</span>
-          <div class="kpi-value" id="kpi-hr">57.0 <span class="unit">BPM</span></div>
-          <span class="kpi-sub">Signal Quality SNR: +8.4 dB</span>
+        <div class="card">
+          <h3>Published group means</h3>
+          <div class="chart-box tall"><canvas id="c-anchors"></canvas></div>
+          <p class="foot">Lee 2020 (parabolic flight), Marshall-Goebel 2019 (ISS + ground), Martin 2016. Whisker: 95 % CI or ±SD as published.</p>
+          <details><summary>Table view</summary><div class="table-scroll"><table class="tbl" id="t-anchors"></table></div></details>
         </div>
       </div>
-
-      <!-- Charts Section -->
-      <div class="charts-grid">
-        <div class="chart-card card">
-          <div class="chart-header">
-            <h3>Venous Gravitational Response & ESA Comparison</h3>
-            <span class="provenance-badge real">Measured ESA & Model Overlay</span>
-          </div>
-          <div class="chart-container">
-            <canvas id="hemoChart"></canvas>
-          </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Within-person slope vs gz_body</h3>
+          <div class="table-scroll"><table class="tbl" id="t-slopes"></table></div>
+          <p class="foot">Least-squares slope per person over seven tilt levels; median and bootstrap 95 % CI over people.</p>
         </div>
-
-        <div class="chart-card card">
-          <div class="chart-header">
-            <h3>Optical rPPG Pulse Waveform (Independently Validated)</h3>
-            <span class="provenance-badge optical">Non-Contact Facial RGB</span>
-          </div>
-          <div class="chart-container">
-            <canvas id="rppgChart"></canvas>
-          </div>
+        <div class="card">
+          <h3>Heart rate: supine → 75° tilt → standing</h3>
+          <div class="chart-box short"><canvas id="c-prcp"></canvas></div>
+          <p class="foot">PhysioNet PRCP (ODC-By), 10 people. Grey: individuals; blue: median.</p>
         </div>
-
-        <div class="chart-card card full-width">
-          <div class="chart-header">
-            <h3>Synthetic Optical-Physiological Proxy Bridge (Module D Feasibility)</h3>
-            <span class="provenance-badge synth">Synthetic Observation Proxy</span>
-          </div>
-          <div class="chart-container-compact">
-            <canvas id="bridgeChart"></canvas>
-          </div>
-          <p class="chart-footnote">*Hypothetical optical proxy feature modeling facial perfusion modulation under venous filling changes. Evaluated for mathematical identifiability under configurable noise levels.</p>
+      </div>
+      <div class="card internal hidden" id="internal-card">
+        <div class="card-head"><h3>Team-only data</h3><span class="badge internal-b">INTERNAL · no licence · do not publish</span></div>
+        <div class="grid-2">
+          <div><p class="chart-title">IJV area under lower-body negative pressure (n = 24)</p><div class="chart-box"><canvas id="c-lbnp"></canvas></div></div>
+          <div><p class="chart-title">Intraocular pressure vs tilt (n = 24)</p><div class="chart-box"><canvas id="c-iop"></canvas></div></div>
         </div>
       </div>
     </section>
+
+    <!-- ------------------------------------------------------------------ bridge -->
+    <section id="bridge" class="section">
+      <div class="section-head">
+        <h2>Model bridge · what the compartment model predicts</h2>
+        <span class="badge model">MODEL · default parameters · not fitted</span>
+      </div>
+      <p class="muted">The forward model of the venous compartments (Daniel's simulator) is shown next to the real tilt data.
+        It is the bridge between the two validated layers and is <strong>not</strong> validated end-to-end.</p>
+      <div class="grid-2">
+        <div class="card">
+          <label class="slider-label">gz_body <span id="gz-val" class="val"></span>
+            <input type="range" id="gz" min="-0.75" max="1" step="0.01" value="0"></label>
+          <div class="presets">
+            <button data-gz="-0.71">45° head-down</button><button data-gz="0">Flat / 0 G</button>
+            <button data-gz="0.38">Mars-like 0.38</button><button data-gz="0.71">45° head-up</button><button data-gz="1">Seated, 1 G</button>
+          </div>
+          <div class="compare" id="compare"></div>
+        </div>
+        <div class="card">
+          <h3>Model curve vs real medians</h3>
+          <div class="chart-box tall"><canvas id="c-model"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------ quality -->
+    <section id="quality" class="section">
+      <div class="section-head"><h2>Data quality · what is wrong with the data, in numbers</h2></div>
+      <p class="muted">Problems found in the real recordings and how the pipeline handles them. Nothing here is hidden from the results above.</p>
+      <div class="grid-2">
+        <div class="card"><h3>UBFC-rPPG video + finger sensor</h3><ul class="qlist" id="q-ubfc"></ul></div>
+        <div class="card"><h3>Physiology tables</h3><ul class="qlist" id="q-phys"></ul></div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------ data -->
+    <section id="data" class="section">
+      <h2>Data sources</h2>
+      <div class="table-scroll"><table class="tbl wide" id="t-data"></table></div>
+    </section>
   </main>
 
-  <footer class="footer">
-    <p>BOBER Veins / VascuShift-GPINN &middot; International Space Science and Scientific Payload Competition (ISSSP) 2026 &middot; Hong Kong Finals</p>
-  </footer>
-
+  <footer class="wrap footer" id="footer"></footer>
   <script src="app.js"></script>
 </body>
 </html>
-
