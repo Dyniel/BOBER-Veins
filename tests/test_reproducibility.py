@@ -5,15 +5,15 @@ End-to-end reproducibility and determinism tests.
 import numpy as np
 import pytest
 
-from vascushift.data.esa_loader import get_verified_published_cohort
+from vascushift.data.esa_loader import generate_synthetic_esa_like_cohort
 from vascushift.physics.simulator import VenousHemodynamicSimulator
 from vascushift.models.physics_informed import VascuShiftPINN
 
 
 def test_deterministic_cohort_generation():
     """Generating cohort twice with same seed must yield identical dataframes."""
-    df1 = get_verified_published_cohort()
-    df2 = get_verified_published_cohort()
+    df1 = generate_synthetic_esa_like_cohort()
+    df2 = generate_synthetic_esa_like_cohort()
     assert df1.equals(df2)
 
 

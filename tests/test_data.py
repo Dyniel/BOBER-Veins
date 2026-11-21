@@ -5,7 +5,7 @@ Unit tests for data loaders, schema validation, and subject partitioning.
 import numpy as np
 import pytest
 
-from vascushift.data.esa_loader import get_verified_published_cohort, load_esa_data
+from vascushift.data.esa_loader import generate_synthetic_esa_like_cohort, load_esa_data
 from vascushift.data.validation import validate_physiological_dataset
 from vascushift.data.preprocessing import (
     get_subject_grouped_splits,
@@ -13,9 +13,9 @@ from vascushift.data.preprocessing import (
 )
 
 
-def test_verified_published_cohort_structure():
-    """Verify that the published ESA cohort has exactly 9 subjects and expected variables."""
-    df = get_verified_published_cohort()
+def test_synthetic_esa_like_cohort_structure():
+    """The synthetic ESA-like stand-in cohort has 9 subjects x 5 conditions and is labelled synthetic."""
+    df = generate_synthetic_esa_like_cohort()
     assert len(df) == 45  # 9 subjects * 5 gravity conditions
     assert df["subject_id"].nunique() == 9
     expected_cols = [
@@ -25,11 +25,12 @@ def test_verified_published_cohort_structure():
     ]
     for col in expected_cols:
         assert col in df.columns
+    assert df["provenance"].str.startswith("SYNTHETIC").all()
 
 
 def test_dataset_validation_passes():
     """Ensure data validator passes for realistic physiological bounds."""
-    df = get_verified_published_cohort()
+    df = generate_synthetic_esa_like_cohort()
     report = validate_physiological_dataset(df, strict=True)
     assert report.is_valid
     assert len(report.issues) == 0
@@ -37,7 +38,7 @@ def test_dataset_validation_passes():
 
 def test_subject_grouped_splits_disjointness():
     """Ensure train and test splits are strictly subject-disjoint."""
-    df = get_verified_published_cohort()
+    df = generate_synthetic_esa_like_cohort()
     splits = get_subject_grouped_splits(df, subject_col="subject_id")
     assert len(splits) == 9
 
