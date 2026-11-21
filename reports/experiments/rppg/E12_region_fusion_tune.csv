@@ -1,0 +1,17 @@
+variant,split,n_sessions,n_windows,mae,rmse,within5_pct,gross_gt10_pct,median_ae,regions,weighting,tracker
+E12_fullbox_quality,tune,21,608,1.263,6.106,97.7,1.97,0.343,fullbox,quality,none
+E12_fullbox_quality_vit,tune,21,608,0.622,1.638,98.85,0.66,0.351,fullbox,quality,viterbi
+E12_fullbox_equal,tune,21,608,1.263,6.106,97.7,1.97,0.343,fullbox,equal,none
+E12_fullbox_equal_vit,tune,21,608,0.622,1.638,98.85,0.66,0.351,fullbox,equal,viterbi
+E12_fullbox+cheeks_quality,tune,21,608,0.989,4.855,98.36,1.32,0.34,fullbox+cheeks,quality,none
+E12_fullbox+cheeks_quality_vit,tune,21,608,0.599,1.597,99.18,0.66,0.343,fullbox+cheeks,quality,viterbi
+E12_fullbox+cheeks_equal,tune,21,608,0.953,4.644,98.36,1.15,0.357,fullbox+cheeks,equal,none
+E12_fullbox+cheeks_equal_vit,tune,21,608,0.604,1.597,99.18,0.66,0.346,fullbox+cheeks,equal,viterbi
+E12_fullbox+cheeks+central_quality,tune,21,608,0.997,4.984,98.36,1.32,0.343,fullbox+cheeks+central,quality,none
+E12_fullbox+cheeks+central_quality_vit,tune,21,608,0.594,1.593,99.18,0.66,0.33,fullbox+cheeks+central,quality,viterbi
+E12_fullbox+cheeks+central_equal,tune,21,608,1.026,5.021,98.19,1.48,0.343,fullbox+cheeks+central,equal,none
+E12_fullbox+cheeks+central_equal_vit,tune,21,608,0.592,1.584,99.18,0.66,0.326,fullbox+cheeks+central,equal,viterbi
+E12_fullbox+cheeks+central+forehead_quality,tune,21,608,0.923,4.696,98.36,1.15,0.316,fullbox+cheeks+central+forehead,quality,none
+E12_fullbox+cheeks+central+forehead_quality_vit,tune,21,608,0.597,1.601,99.01,0.66,0.33,fullbox+cheeks+central+forehead,quality,viterbi
+E12_fullbox+cheeks+central+forehead_equal,tune,21,608,0.96,4.746,98.19,1.32,0.321,fullbox+cheeks+central+forehead,equal,none
+E12_fullbox+cheeks+central+forehead_equal_vit,tune,21,608,0.6,1.605,99.01,0.66,0.333,fullbox+cheeks+central+forehead,equal,viterbi
