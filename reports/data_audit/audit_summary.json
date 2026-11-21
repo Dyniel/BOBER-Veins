@@ -1,0 +1,494 @@
+{
+  "generated_utc": "2026-11-05T07:58:41Z",
+  "registry": {
+    "esa_hreda_headward_fluid_shift": {
+      "name": "ESA HREDA - Headward Fluid Shift (HeadwardFluidShift_PARA)",
+      "layer": "physiology",
+      "doi": "10.57780/esa-0ggni9p",
+      "url": "https://hreda.esac.esa.int/",
+      "campaign": "82nd ESA (NASA) Parabolic Flight Campaign, 12-15 June 2023, Novespace A310 ZERO-G",
+      "subjects": 9,
+      "conditions": "ground 1G supine + seated; in flight seated 0, 0.25, 0.50, 0.75 G and 1G level flight",
+      "variables": "IJV cross-sectional area, IJV flow pattern, IJV pressure (compression sonography)",
+      "status": "metadata_only",
+      "access": "HREDA TAP: data_available=False, 0 data files, results 'under evaluation' (checked 2026-11-04). Only route: contact PI Stuart M. C. Lee (team: D. S. Martin, C. Miller).",
+      "license": "CC BY-NC 3.0 IGO (HREDA metadata)"
+    },
+    "lee2020_partial_gravity": {
+      "name": "Lee et al. 2020, Venous and Arterial Responses to Partial Gravity",
+      "layer": "physiology",
+      "doi": "10.3389/fphys.2020.00863",
+      "campaign": "1st ISLSWG parabolic flight campaign, June 2018, Novespace (NOT PFC82; no 0-G parabolas)",
+      "subjects": 9,
+      "conditions": "1.00-Gz supine (pre-flight, '0-G analog'); seated 1.00 (level flight), 0.75, 0.50, 0.25 Gz",
+      "variables": "IJV area (n=8), IVC diameter, CCA flow & area, IJV flow grade, HR, MAP; IJV pressure only for a subset (6 subjects; none seated at 0.75/1.00 Gz)",
+      "status": "transcribed",
+      "access": "Group means/95% CI transcribed from Tables 2-3 into data/external. Individual data: request via NASA Life Sciences Data Archive (https://lsda.jsc.nasa.gov/).",
+      "license": "CC BY 4.0 (article)"
+    },
+    "marshall_goebel2019_iss_ijv": {
+      "name": "Marshall-Goebel et al. 2019, Jugular Venous Flow Stasis During Spaceflight",
+      "layer": "physiology",
+      "doi": "10.1001/jamanetworkopen.2019.15011",
+      "campaign": "ISS long-duration crew (n=11), preflight seated/supine/15deg HDT, flight day ~50 and ~150 (+/- LBNP 25 mmHg), postflight",
+      "subjects": 11,
+      "conditions": "true microgravity (ISS) + 1G posture analogs",
+      "variables": "left IJV area, IJV pressure, IJV flow grade, SV, CO, HR, MAP, SBP, DBP",
+      "status": "transcribed",
+      "access": "Group means/95% CI transcribed from text and Table into data/external. Individual data: NASA LSDA request.",
+      "license": "CC BY (JAMA Netw Open open access)"
+    },
+    "physionet_prcp": {
+      "name": "PhysioNet PRCP - Physiologic Response to Changes in Posture",
+      "layer": "physiology",
+      "doi": "10.13026/C2PC7R",
+      "url": "https://physionet.org/content/prcp/1.0.0/",
+      "subjects": 10,
+      "conditions": "supine rest, slow tilt, fast tilt (to 75 deg), stand-up; tilt-angle timeline in annotations",
+      "variables": "ECG, continuous arterial blood pressure (beat-level HR, MAP derivable)",
+      "status": "downloaded",
+      "access": "Open (no login)",
+      "license": "ODC-By 1.0"
+    },
+    "physionet_cardioresp_orthostat": {
+      "name": "PhysioNet - Two-tiered response of cardiorespiratory-cerebrovascular networks to orthostatic challenge",
+      "layer": "physiology",
+      "doi": "10.13026/73w7-x881",
+      "url": "https://physionet.org/content/cardioresp-response-orthostat/1.0/",
+      "subjects": 10,
+      "conditions": "30 min rest (sitting), 1 min stand-up, 1 min sit-down",
+      "variables": "ABP, cardiac cycle duration, breath interval, cerebral BFV (TCD), NIRS raw intensities (HbO/HbR/HbT derivable)",
+      "status": "downloaded",
+      "access": "Open (no login); PhysioNet Contributor Review Health Data License 1.5.0",
+      "license": "PhysioNet Contributor Review Health Data License 1.5.0"
+    },
+    "bhp_carotid_jugular": {
+      "name": "Whittle & Diaz-Artiles 2023 - carotid and jugular characteristics in graded HUT/HDT",
+      "layer": "physiology",
+      "doi": "10.1152/japplphysiol.00248.2022",
+      "url": "https://github.com/BHP-Lab/carotid-jugular-characteristics",
+      "subjects": 12,
+      "conditions": "seated; supine and prone tilt +45..-45 deg in 15 deg steps (gz_body +0.71..-0.71)",
+      "variables": "IJV area L/R (mm2, n=11), IJV pressure L/R (compression sonography), CCA area L/R",
+      "status": "downloaded",
+      "access": "Public GitHub repo (no login), pinned commit in the download manifest",
+      "license": "MIT"
+    },
+    "bhp_tilt_dose_response": {
+      "name": "Whittle et al. 2022 JAHA - tilt gravitational dose-response (superset, 24 subjects)",
+      "layer": "physiology",
+      "doi": "10.1161/JAHA.121.024175",
+      "url": "https://github.com/BHP-Lab/tilt-dose-response",
+      "subjects": 24,
+      "conditions": "same tilt protocol as bhp_carotid_jugular, 12 F / 12 M",
+      "variables": "HR, SBP/DBP/MAP, SV, CO (Finapres), IJV area L/R, IJV pressure L/R, intraocular pressure L/R, CCA area",
+      "status": "downloaded",
+      "access": "Public GitHub repo WITHOUT licence: internal analysis only; ask A. Diaz-Artiles (adartiles@tamu.edu) before publishing per-subject data or derived figures",
+      "license": "none stated (all rights reserved by default); article CC BY"
+    },
+    "bhp_lbnp_dose_response": {
+      "name": "BHP-Lab LBNP dose-response raw data",
+      "layer": "physiology",
+      "url": "https://github.com/BHP-Lab/LBNP-Dose-Response",
+      "subjects": 24,
+      "conditions": "seated; supine and 15 deg HDT with LBNP 0, -10 ... -50 mmHg",
+      "variables": "HR, BP, SV, CO, IJV area L/R, IJV pressure L/R, IOP L/R, CCA area (+ IJV flow, CCA PSV/EDV, OPP not mapped: units undocumented)",
+      "status": "downloaded",
+      "access": "Public GitHub repo WITHOUT licence: internal analysis only; ask the authors before publishing",
+      "license": "none stated"
+    },
+    "hreda_drain_brain": {
+      "name": "ESA HREDA - Drain Brain (ISS, strain-gauge plethysmography of jugular outflow)",
+      "layer": "physiology",
+      "doi": "10.57780/esa-gfzqcv2",
+      "subjects": 1,
+      "conditions": "ISS increments 41-44 (2014-2015) vs ground",
+      "variables": "cervical venous plethysmography (see Taibi et al. 2017, Physiol Meas 38:1939)",
+      "status": "login_required",
+      "access": "HREDA lists only a Data Blank Book PDF (medical_sensitive=True); download needs an ESA/HREDA login; raw data via HREDA data request.",
+      "license": "ESA HREDA terms"
+    },
+    "hreda_bed_rest_blank_books": {
+      "name": "ESA HREDA - head-down bed-rest studies (Cocktail, MNX, NUC, BRAG, RSL)",
+      "layer": "physiology",
+      "status": "login_required",
+      "access": "Each lists only Data Blank Book PDFs (variable catalogues). Raw data via HREDA data request.",
+      "license": "ESA HREDA terms"
+    },
+    "ubfc_rppg": {
+      "name": "UBFC-rPPG (DATASET_1 simple, DATASET_2 realistic)",
+      "layer": "optical",
+      "doi": "10.1016/j.patrec.2017.10.017",
+      "url": "https://sites.google.com/view/ybenezeth/ubfcrppg",
+      "subjects": "DATASET_2: 42 videos; DATASET_1: 8 videos",
+      "variables": "uncompressed 640x480 RGB @30 fps (Logitech C920) + CMS50E finger PPG waveform and HR",
+      "status": "downloaded",
+      "access": "Public mirrors linked from the official page (no login): authors' OneDrive/SharePoint (used; Google Drive mirror hits 'too many downloads' quota). ~92 GB uncompressed AVI.",
+      "license": "Research use; cite Bobbia et al. 2017. DATASET_2 subjects 21 and 27: facial images must NOT appear in any publication/presentation/report (readme.txt)."
+    },
+    "physionet_videopulse": {
+      "name": "PhysioNet videopulse - Video Pulse Signals in Stationary and Motion Conditions",
+      "layer": "optical",
+      "doi": "10.13026/C28D5M",
+      "url": "https://physionet.org/content/videopulse/1.0.0/",
+      "subjects": 15,
+      "variables": "pre-extracted video pulse signals + finger pulse reference (no raw video)",
+      "status": "downloaded",
+      "access": "Open (no login)",
+      "license": "ODC-By 1.0"
+    },
+    "pure": {
+      "name": "PURE (TU Ilmenau)",
+      "layer": "optical",
+      "status": "request_required",
+      "access": "e-mail request to the authors (Stricker et al. 2014)",
+      "license": "research only"
+    },
+    "ubfc_phys": {
+      "name": "UBFC-Phys",
+      "layer": "optical",
+      "status": "request_required",
+      "access": "IEEE DataPort / authors' form",
+      "license": "research only"
+    },
+    "mmpd": {
+      "name": "MMPD (mobile, skin tones, motion)",
+      "layer": "optical",
+      "status": "request_required",
+      "access": "signed agreement e-mailed to the authors",
+      "license": "research only"
+    },
+    "hreda_epo_uznanski_videos": {
+      "name": "ESA HREDA - EPO Uznanski Generic Videos (Ignis, ISS 2025)",
+      "layer": "optical",
+      "doi": "10.57780/esa-jghq0qr",
+      "variables": "182 files (123 MOV, 11 MP4, 47 JPEG), 30.5 GB; astronaut face video in microgravity, no physiological GT",
+      "status": "login_required",
+      "access": "Files public (access_granted, security level 0-1) but download needs an HREDA login.",
+      "license": "ESA EPO material - check terms before publishing frames"
+    },
+    "synthetic_esa_like_cohort": {
+      "name": "esa_loader.generate_synthetic_esa_like_cohort() (formerly get_verified_published_cohort) - 9x5 table",
+      "layer": "physiology",
+      "status": "synthetic",
+      "access": "Generated with np.random (seed 42) around Lee 2020 group means; IJV pressure, supine HR/MAP and 0.75/1.00-G pressures are NOT in the paper at all.",
+      "license": "n/a"
+    },
+    "synthetic_rppg_cohort": {
+      "name": "rppg_loader.generate_synthetic_rppg_session()",
+      "layer": "optical",
+      "status": "synthetic",
+      "access": "Sinusoidal pulse + noise RGB traces; no video.",
+      "license": "n/a"
+    }
+  },
+  "local": {
+    "physionet_prcp": {
+      "path": "data/raw/physionet/prcp/1.0.0",
+      "present": true,
+      "bytes": 56731501,
+      "manifest_files": 52,
+      "checksum_verified": true,
+      "retrieved_utc": "2026-11-04T22:01:36Z"
+    },
+    "physionet_videopulse": {
+      "path": "data/raw/physionet/videopulse/1.0.0",
+      "present": true,
+      "bytes": 5788442,
+      "manifest_files": 162,
+      "checksum_verified": true,
+      "retrieved_utc": "2026-11-04T22:05:06Z"
+    },
+    "physionet_cardioresp_response_orthostat": {
+      "path": "data/raw/physionet/cardioresp-response-orthostat/1.0",
+      "present": true,
+      "bytes": 18639480,
+      "manifest_files": 23,
+      "checksum_verified": true,
+      "retrieved_utc": "2026-11-04T22:05:52Z"
+    },
+    "github_carotid-jugular-characteristics": {
+      "path": "data/raw/github/carotid-jugular-characteristics",
+      "present": true,
+      "bytes": 344805,
+      "commit": "8cedcd43e75d",
+      "license": "MIT",
+      "retrieved_utc": "2026-11-04T22:20:35Z"
+    },
+    "github_tilt-dose-response": {
+      "path": "data/raw/github/tilt-dose-response",
+      "present": true,
+      "bytes": 268190,
+      "commit": "9c1471a5ed68",
+      "license": "NONE (all rights reserved by default)",
+      "retrieved_utc": "2026-11-04T22:20:37Z"
+    },
+    "github_LBNP-Dose-Response": {
+      "path": "data/raw/github/LBNP-Dose-Response",
+      "present": true,
+      "bytes": 252086,
+      "commit": "4a6c4f6c9cfa",
+      "license": "NONE (all rights reserved by default)",
+      "retrieved_utc": "2026-11-04T22:20:39Z"
+    },
+    "ubfc_rppg": {
+      "path": "data/raw/rppg/UBFC-rPPG",
+      "present": true,
+      "bytes": 92114807022,
+      "videos_complete": 50,
+      "videos_expected": 50,
+      "partial_downloads": 0,
+      "manifest_files": 104,
+      "retrieved_utc": "2026-11-05T01:29:52Z"
+    },
+    "esa_raw_files": {
+      "path": "data/raw/esa",
+      "present": false,
+      "files": []
+    }
+  },
+  "hreda_live": [
+    {
+      "investigation_oid": 181,
+      "investigation_unique_acronym": "Hemo_BRIM",
+      "investigation_title": "Effects of bed rest, exercise and artificial gravity on total hemoglobin and blood volume: relation to orthostatic tolerance and aerobic capacity",
+      "investigation_doi": "10.57780/esa-3j1vf0m",
+      "platform_name": "Bed Rest/Immersion",
+      "mission_name": "BRACE 2023 - Bed Rest with Artificial gravity and Cycling Exercise",
+      "start_date": "2023-04-01T00:00:00.0",
+      "end_date": "2023-07-31T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": false,
+      "medical_sensitive": false,
+      "team_coordinator_name": "Dag Linnarsson",
+      "last_update_date": "2025-11-07T16:33:46.517",
+      "n_files": 0,
+      "total_bytes": 0
+    },
+    {
+      "investigation_oid": 210,
+      "investigation_unique_acronym": "MobileHR_ISS",
+      "investigation_title": "MobileHR - Testing of Heart Rate in Space of a new mobile HR monitor (Danish National Contribution)",
+      "investigation_doi": "10.57780/esa-5wfgp9s",
+      "platform_name": "ISS",
+      "mission_name": "Inc43, Inc44",
+      "start_date": "2015-03-12T00:00:00.0",
+      "end_date": "2015-09-11T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": true,
+      "medical_sensitive": true,
+      "team_coordinator_name": "Søren Bendtsen",
+      "last_update_date": "2025-11-07T22:35:17.194",
+      "n_files": 1,
+      "total_bytes": 588092
+    },
+    {
+      "investigation_oid": 217,
+      "investigation_unique_acronym": "Drain_Brain_ISS",
+      "investigation_title": "Drain Brain - Strain-gauge Plethysmographic Analysis of the Cerebral Drainage Experimented and Assessed in the Micro-gravitational Setting (ASI National Contribution)",
+      "investigation_doi": "10.57780/esa-gfzqcv2",
+      "platform_name": "ISS",
+      "mission_name": "Inc41, Inc42, Inc43, Inc44",
+      "start_date": "2014-09-11T00:00:00.0",
+      "end_date": "2015-09-11T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": true,
+      "medical_sensitive": true,
+      "team_coordinator_name": "P Zamboni, A Taibi",
+      "last_update_date": "2025-11-07T11:35:11.52",
+      "n_files": 1,
+      "total_bytes": 545144
+    },
+    {
+      "investigation_oid": 236,
+      "investigation_unique_acronym": "HeadwardFluidShift_PARA",
+      "investigation_title": "Determining the Dose Response Profile of the Headward Fluid Shift during Varying Gravity Levels",
+      "investigation_doi": "10.57780/esa-0ggni9p",
+      "platform_name": "Parabolic Airplanes",
+      "mission_name": "82nd ESA (NASA) Parabolic Flight Campaign",
+      "start_date": "2023-06-12T00:00:00.0",
+      "end_date": "2023-06-15T00:00:00.0",
+      "data_available": false,
+      "ancillary_data_available": false,
+      "medical_sensitive": false,
+      "team_coordinator_name": "Stuart M. C. Lee",
+      "last_update_date": "2026-01-21T12:07:30.224",
+      "n_files": 0,
+      "total_bytes": 0
+    },
+    {
+      "investigation_oid": 944,
+      "investigation_unique_acronym": "BRAG_BRIM",
+      "investigation_title": "BRAG - BedRest with Artificial Gravity",
+      "investigation_doi": "10.57780/esa-5e4gbua",
+      "platform_name": "Bed Rest/Immersion",
+      "mission_name": "BRAG - Bed Rest with Artificial Gravity",
+      "start_date": "2010-04-01T00:00:00.0",
+      "end_date": "2010-08-31T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": false,
+      "medical_sensitive": false,
+      "team_coordinator_name": null,
+      "last_update_date": "2025-11-06T16:32:36.005",
+      "n_files": 2,
+      "total_bytes": 1264631
+    },
+    {
+      "investigation_oid": 945,
+      "investigation_unique_acronym": "Cocktail_BRIM",
+      "investigation_title": "Bed Rest Study \"Cocktail\" CNES-ESA",
+      "investigation_doi": "10.57780/esa-xzt5zmo",
+      "platform_name": "Bed Rest/Immersion",
+      "mission_name": "Bed Rest Study \"Cocktail\" CNES-ESA - MEDES 2017",
+      "start_date": "2017-01-01T00:00:00.0",
+      "end_date": "2017-12-31T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": false,
+      "medical_sensitive": false,
+      "team_coordinator_name": null,
+      "last_update_date": "2025-11-06T20:34:38.521",
+      "n_files": 1,
+      "total_bytes": 883780
+    },
+    {
+      "investigation_oid": 946,
+      "investigation_unique_acronym": "MNX_BRIM",
+      "investigation_title": "MNX - Medium duration Nutrition and vibration eXercise",
+      "investigation_doi": "10.57780/esa-ez94syj",
+      "platform_name": "Bed Rest/Immersion",
+      "mission_name": "MNX - Medium duration Nutrition and viration eXercise",
+      "start_date": "2012-06-01T00:00:00.0",
+      "end_date": "2013-06-30T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": false,
+      "medical_sensitive": false,
+      "team_coordinator_name": null,
+      "last_update_date": "2025-11-07T21:34:16.773",
+      "n_files": 2,
+      "total_bytes": 1656280
+    },
+    {
+      "investigation_oid": 947,
+      "investigation_unique_acronym": "NUC_BRIM",
+      "investigation_title": "NUC Bed Rest Study - Integrative Physiology in Space Flight: Nutritional Countermeasures (DATA)",
+      "investigation_doi": "10.57780/esa-iilzgc7",
+      "platform_name": "Bed Rest/Immersion",
+      "mission_name": "NUC Bed Rest - Integrative Physiology in Space Flight: Nutritional Countermeasures",
+      "start_date": "2010-02-22T00:00:00.0",
+      "end_date": "2010-10-15T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": false,
+      "medical_sensitive": false,
+      "team_coordinator_name": null,
+      "last_update_date": "2025-11-08T11:34:55.677",
+      "n_files": 2,
+      "total_bytes": 1538742
+    },
+    {
+      "investigation_oid": 949,
+      "investigation_unique_acronym": "RSL_BRIM",
+      "investigation_title": "RSL - Reactive SLedge jump system",
+      "investigation_doi": "10.57780/esa-kbpc2dn",
+      "platform_name": "Bed Rest/Immersion",
+      "mission_name": "RSL long-term bed rest DLR-ESA - :envihab 2015/2016",
+      "start_date": "2015-08-25T00:00:00.0",
+      "end_date": "2016-05-13T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": false,
+      "medical_sensitive": false,
+      "team_coordinator_name": null,
+      "last_update_date": "2025-11-08T14:34:26.022",
+      "n_files": 2,
+      "total_bytes": 1757960
+    },
+    {
+      "investigation_oid": 3187,
+      "investigation_unique_acronym": "EPO_UznanskiVideos_ignis_ISS",
+      "investigation_title": "EPO Uznanski Generic Videos - ignis",
+      "investigation_doi": "10.57780/esa-jghq0qr",
+      "platform_name": "ISS",
+      "mission_name": "Inc73",
+      "start_date": "2025-03-31T00:00:00.0",
+      "end_date": "2025-09-15T00:00:00.0",
+      "data_available": true,
+      "ancillary_data_available": false,
+      "medical_sensitive": false,
+      "team_coordinator_name": "Alana Bartolini, Anna Bukiewicz-Szul",
+      "last_update_date": "2025-11-24T23:31:33.056",
+      "n_files": 182,
+      "total_bytes": 30468838109
+    }
+  ],
+  "literature_csv": "reports/data_audit/literature_aggregates.csv",
+  "ubfc": {
+    "sessions_with_gt": 50,
+    "sessions_with_video": 50,
+    "gt_with_duplicate_timestamps": 9,
+    "gt_with_gap_over_0p5s": 6,
+    "sessions_with_sensor_hr_dropouts": [
+      "ubfc-d2-subject11",
+      "ubfc-d2-subject18",
+      "ubfc-d2-subject20",
+      "ubfc-d2-subject24"
+    ],
+    "no_face_display": [
+      "ubfc-d2-subject27"
+    ]
+  },
+  "prcp": {
+    "subjects": 10,
+    "group_means_by_condition": {
+      "hut75": {
+        "diastolic_bp": 61.7,
+        "heart_rate": 80.6,
+        "mean_arterial_pressure": 74.8,
+        "systolic_bp": 107.5
+      },
+      "standing": {
+        "diastolic_bp": 62.7,
+        "heart_rate": 79.4,
+        "mean_arterial_pressure": 76.5,
+        "systolic_bp": 111.9
+      },
+      "supine": {
+        "diastolic_bp": 55.4,
+        "heart_rate": 66.4,
+        "mean_arterial_pressure": 70.5,
+        "systolic_bp": 109.2
+      }
+    }
+  },
+  "physiology_long": {
+    "rows": 10244,
+    "by_dataset": {
+      "bhp_carotid_jugular": 12,
+      "bhp_lbnp_dose_response": 24,
+      "bhp_tilt_dose_response": 24,
+      "lee2020_partial_gravity": 1,
+      "marshall_goebel2019_iss_ijv": 1,
+      "martin2016_parabolic_ijvp": 1,
+      "physionet_prcp": 10
+    },
+    "variables": [
+      "cardiac_output",
+      "cca_area",
+      "cca_area_left",
+      "cca_area_right",
+      "cca_flow",
+      "diastolic_bp",
+      "heart_rate",
+      "ijv_area_left",
+      "ijv_area_right",
+      "ijv_flow_grade2_fraction",
+      "ijv_pressure",
+      "ijv_pressure_left",
+      "ijv_pressure_right",
+      "iop_left",
+      "iop_right",
+      "ivc_diameter",
+      "mean_arterial_pressure",
+      "stroke_volume",
+      "systolic_bp"
+    ]
+  }
+}

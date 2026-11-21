@@ -34,16 +34,29 @@ def load_yaml_config(path: str) -> Dict[str, Any]:
 
 
 def cmd_data_audit(args: argparse.Namespace) -> None:
-    print("=== [CLI] ESA HEADWARD FLUID SHIFT DATA AUDIT ===")
+    from vascushift.data.audit import format_audit, run_data_audit
+
+    summary = run_data_audit(data_dir=Path("data"), out_dir=Path("reports/data_audit"),
+                             online=not getattr(args, "offline", False))
+    print(format_audit(summary))
+
+    print("\n--- Legacy ESA loader (SYNTHETIC stand-in, not measured data) ---")
     df, report, meta = load_esa_data(data_dir="data")
-    print(f"Investigation: {meta['investigation_acronym']} (DOI: {meta['doi']})")
-    print(f"Data source:    {meta['source']}")
-    print(f"Participants:   {meta['n_subjects']} subjects (Cohort size N={meta['n_samples']})")
-    print(f"Gravity levels: {meta['gravity_levels']}")
-    print("\n--- Validation Report ---")
+    print(f"source={meta['source']} is_synthetic={meta['is_synthetic']} "
+          f"rows={meta['n_samples']} subjects={meta['n_subjects']}")
     print(report.summary())
-    print("\n--- Real-Time ESA HREDA Query ---")
-    print(meta["hreda_status"])
+    print("\nOutputs written to reports/data_audit/ (see docs/data_audit.md for interpretation).")
+
+
+def cmd_preprocess(args: argparse.Namespace) -> None:
+    from vascushift.data.preprocess import preprocess_physiology, preprocess_ubfc
+
+    print("=== [CLI] PREPROCESSING REAL DATA -> COMMON FORMAT ===")
+    idx = preprocess_ubfc(data_dir=Path(args.data_dir), fs_out=args.fs, force=args.force, verbose=not args.quiet)
+    print(f"UBFC-rPPG: {len(idx)} sessions -> {Path(args.data_dir) / 'processed' / 'rppg' / 'sessions.csv'}")
+    paths = preprocess_physiology(data_dir=Path(args.data_dir))
+    for k, v in paths.items():
+        print(f"physiology ({k}): {v}")
 
 
 def cmd_simulate(args: argparse.Namespace) -> None:
@@ -153,8 +166,15 @@ def main() -> None:
     )
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
 
-    p_audit = subparsers.add_parser("data-audit", help="Audit ESA HREDA and local dataset")
+    p_audit = subparsers.add_parser("data-audit", help="Audit all datasets: registry, local files, HREDA status")
     p_audit.add_argument("--config", default="configs/data.yaml")
+    p_audit.add_argument("--offline", action="store_true", help="skip the live ESA HREDA query")
+
+    p_pre = subparsers.add_parser("preprocess", help="Real data -> common formats (UBFC 30 Hz sessions, physiology long table)")
+    p_pre.add_argument("--data-dir", default="data")
+    p_pre.add_argument("--fs", type=float, default=30.0, help="uniform grid rate for optical sessions [Hz]")
+    p_pre.add_argument("--force", action="store_true")
+    p_pre.add_argument("--quiet", action="store_true")
 
     p_sim = subparsers.add_parser("simulate", help="Forward physiological simulation")
     p_sim.add_argument("--config", default="configs/physics_model.yaml")
@@ -178,6 +198,8 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "data-audit":
         cmd_data_audit(args)
+    elif args.command == "preprocess":
+        cmd_preprocess(args)
     elif args.command == "simulate":
         cmd_simulate(args)
     elif args.command == "train-physics":

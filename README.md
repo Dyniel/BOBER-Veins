@@ -8,6 +8,13 @@
 > **Physics-Informed Modeling of Venous Fluid Redistribution and Optical rPPG under Altered Gravitational Loads.**  
 > Developed for the **International Space Science and Scientific Payload Competition (ISSSP) 2026** (Finals in Hong Kong, November 2026).
 
+> [!WARNING]
+> **Data status (audit 2026-11-04, [`docs/data_audit.md`](docs/data_audit.md)).** The ESA HREDA
+> Headward Fluid Shift investigation has no downloadable data, and the 9-subject "ESA cohort" used for
+> Results A–B below is a *synthetic* table generated around published group means; Result D was computed
+> on synthetic rPPG signals. Real sources now available: published flight/ISS group values, per-subject
+> tilt/LBNP jugular data (Whittle & Diaz-Artiles) and UBFC-rPPG videos. Results below are pending re-run.
+
 ---
 
 ## 1. Project Overview & Scientific Mission
